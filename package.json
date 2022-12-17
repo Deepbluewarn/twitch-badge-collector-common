@@ -1,0 +1,83 @@
+{
+  "name": "twitch-badge-collector-cc",
+  "version": "0.0.76",
+  "description": "Common component library for Twitch Badge Collector projects",
+  "author": "bluewarn",
+  "keywords": [],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "./dist/twitch-badge-collector-cc.umd.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/twitch-badge-collector-cc.es.js",
+      "require": "./dist/twitch-badge-collector-cc.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@fortawesome/free-regular-svg-icons": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mui/icons-material": "^5.10.16",
+    "@mui/material": "^5.10.17",
+    "@mui/x-data-grid": "^5.17.11",
+    "@tanstack/react-query": "^4.19.1",
+    "@tanstack/react-query-devtools": "^4.19.1",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "@types/tmi.js": "^1.8.2",
+    "@types/webextension-polyfill": "^0.9.2",
+    "@vitejs/plugin-react": "^2.2.0",
+    "axios": "^1.2.1",
+    "broadcast-channel": "^4.18.1",
+    "html-to-image": "^1.11.1",
+    "i18next": "^22.3.0",
+    "i18next-browser-languagedetector": "^7.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-ga4": "^1.4.1",
+    "react-i18next": "^12.1.1",
+    "react-router-dom": "^6.4.5",
+    "tmi.js": "^1.8.5",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3",
+    "vite-plugin-dts": "^1.7.1",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@fortawesome/free-regular-svg-icons": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mui/icons-material": "^5.10.16",
+    "@mui/material": "^5.10.16",
+    "@mui/x-data-grid": "^5.17.11",
+    "@tanstack/react-query": "^4.19.0",
+    "axios": "^1.2.0",
+    "broadcast-channel": "^4.18.1",
+    "html-to-image": "^1.10.9",
+    "i18next": "^22.0.6",
+    "i18next-browser-languagedetector": "^7.0.1",
+    "react-router-dom": "^6.4.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-ga4": "^1.4.1",
+    "react-i18next": "^12.0.0",
+    "tmi.js": "^1.8.5",
+    "webextension-polyfill": "^0.10.0"
+  }
+}
