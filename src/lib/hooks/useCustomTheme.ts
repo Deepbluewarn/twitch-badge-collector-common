@@ -28,7 +28,7 @@ export function useCustomTheme(theme: ToggleOptionsType): CustomTheme {
 
     return {
         ...baseTheme,
-        colors: theme ? {
+        colors: theme === 'on' ? {
             textColor_1: '#ececec',
             textColor_2: '#d3d3d3',
             textColorInverted: '#000000',
