@@ -11,13 +11,11 @@ import Box from '@mui/material/Box';
 import { FontSizeOptions, LanguageOptions, PositionOptions, LanguageOptionsType, FontSizeOptionsType, PositionOptionsType } from "../../interface/setting";
 import { useGlobalSettingContext } from "../../context/GlobalSetting";
 import Login from "../login/login";
-
 import { useTranslation } from 'react-i18next';
 
 export type SettingListOptions = 'ALL' | 'WEB_DRAWER' | 'EXT_DRAWER';
 
 export default function Setting(props: { option: SettingListOptions }) {
-
     const { globalSetting, dispatchGlobalSetting } = useGlobalSettingContext();
     const { t } = useTranslation();
 
@@ -44,7 +42,6 @@ export default function Setting(props: { option: SettingListOptions }) {
             dispatchGlobalSetting({ type: 'player', value });
         }
     };
-
 
     const login = (
         <>
@@ -89,12 +86,9 @@ export default function Setting(props: { option: SettingListOptions }) {
                 onChange={handleSwitchChange}
             />
         </ListItem>
-
     );
 
     const chatFontSize = (
-
-
         <ListItem>
             <ListItemText primary={t('setting.font_size')} />
             <FormControl>
@@ -114,9 +108,6 @@ export default function Setting(props: { option: SettingListOptions }) {
                 </Select>
             </FormControl>
         </ListItem>
-
-
-
     );
 
     const position = (
@@ -190,14 +181,10 @@ export default function Setting(props: { option: SettingListOptions }) {
                 {(props.option === 'ALL') ? (
                     <>
                         <Divider />
-
                         <List
                             subheader={<ListSubheader disableSticky={true}>{t('common.player')}</ListSubheader>}
                         >
-                            <ListItem>
-                                <ListItemText primary={t('setting.show_player')} />
-
-                            </ListItem>
+                            {player}
                         </List>
                     </>
                 ) : null}
