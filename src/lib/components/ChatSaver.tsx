@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import * as htmlToImage from 'html-to-image';
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import { useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import FormControl from "@mui/material/FormControl";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -21,6 +21,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import useChannelInfo from "../hooks/useChannelInfo";
+import { useCustomTheme } from "../hooks/useCustomTheme";
 import { useTranslation } from "react-i18next";
 import { MessageInterface } from "../interface/chat";
 import { ChannelInfoInterface } from "../interface/channel";
@@ -30,13 +31,15 @@ import { ChannelChatList, ChannelInfoMessageChannelInterface, ChatListMessageCha
 import { useAlertContext } from "../context/Alert";
 import { ChannelInfoContext } from "../context/ChannelInfoContext";
 import { UserColorContext } from "../context/ChatContext";
+import { useGlobalSettingContext } from "../context";
 import { ChatContainer } from "./chatroom/chat-room-container";
 import SocialFooter from "./SocialFooter";
 
 export default function ChatSaver(props: { env: ENV }) {
   const { addAlert } = useAlertContext();
   const { t } = useTranslation();
-  const bgColor = useTheme<CustomTheme>().colors.remoteBgColor;
+  const { globalSetting, dispatchGlobalSetting } = useGlobalSettingContext();
+  const [bgColor, setBgColor] = useState(useTheme<CustomTheme>().colors.remoteBgColor);
   const { channelInfoObject, dispatchChannelInfo, channel, setChannel } =
     useChannelInfo();
   const [channelChatListMap, setChannelChatListMap] = React.useState<
@@ -94,7 +97,7 @@ export default function ChatSaver(props: { env: ENV }) {
       .catch((err) => {
         console.log(err);
       });
-  }, [channel]);
+  }, [channel, bgColor]);
 
   const sendMessageToFrame = (from: string, type: string, value?: any) => {
     if (props.env !== 'Extension') return;
@@ -313,6 +316,10 @@ export default function ChatSaver(props: { env: ENV }) {
   React.useEffect(() => {
     document.title = `${t("setting.save_chat")}- TBC`;
   }, []);
+
+  useEffect(() => {
+    setBgColor(useCustomTheme(globalSetting.darkTheme).colors.remoteBgColor)
+  }, [globalSetting])
 
   React.useEffect(() => {
     sendMessageToFrame("extension_setting", "CHATSAVER_REQUEST_CHAT_LIST", {
