@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import * as Sentry from "@sentry/minimal";
 import { useAlertContext } from "../context/Alert";
 import { ChatInfo } from "../interface/chat";
 import { ChatInfoObjects } from "../interface/chatInfoObjects";
@@ -8,6 +9,10 @@ import { ArrayFilterListInterface } from "../interface/filter";
 import { arrayFiltersEqual, inIframe } from "../utils/utils";
 
 export default function useArrayFilter(env: ENV) {
+    Sentry.addBreadcrumb({
+        type: env,
+        category: "useArrayFilter",
+    });
     const isIframe = inIframe();
     const localArrayFilter = JSON.parse(isIframe ? '[]' : (localStorage.getItem('tbc-filter') || '[]')) as ArrayFilterListInterface[];
     const [ arrayFilter, setArrayFilter ] = React.useState<ArrayFilterListInterface[]>(localArrayFilter);
@@ -71,6 +76,13 @@ export default function useArrayFilter(env: ENV) {
     const checkFilter = (chat: ChatInfo, chatInfoObject?: ChatInfoObjects) => {
         if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) return false;
 
+        Sentry.addBreadcrumb({
+            type: env,
+            category: "checkFilter",
+            message: JSON.stringify(chat),
+            data: chat
+        });
+
         let res = false; // true 이면 해당 chat 을 포함, false 이면 제외.
 
         for(let arrayFilter of arrayFilterRef.current){
@@ -102,7 +114,7 @@ export default function useArrayFilter(env: ENV) {
                     filterMatchedRes = chat.loginName.toLowerCase() === filter.value.toLowerCase() ||
                         chat.nickName.toLowerCase() === filter.value.toLowerCase();
                 } else if (filter.category === "keyword") {
-                    filterMatchedRes = chat.textContents.some(text => text.includes(filter.value));
+                    filterMatchedRes = chat.textContents.some(text => text !== null ? text.includes(filter.value) : false);
                 }
 
                 if(filter.type === 'exclude'){
