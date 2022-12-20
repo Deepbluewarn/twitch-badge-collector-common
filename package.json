@@ -1,6 +1,6 @@
 {
   "name": "twitch-badge-collector-cc",
-  "version": "0.0.83",
+  "version": "0.0.86",
   "description": "Common component library for Twitch Badge Collector projects",
   "author": "bluewarn",
   "keywords": [],
@@ -72,12 +72,15 @@
     "html-to-image": "^1.10.9",
     "i18next": "^22.0.6",
     "i18next-browser-languagedetector": "^7.0.1",
-    "react-router-dom": "^6.4.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-ga4": "^1.4.1",
     "react-i18next": "^12.0.0",
+    "react-router-dom": "^6.4.5",
     "tmi.js": "^1.8.5",
     "webextension-polyfill": "^0.10.0"
+  },
+  "dependencies": {
+    "@sentry/minimal": "^6.19.7"
   }
 }
