@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { t } from "i18next";
 import React from "react";
 import { useTwitchAPIContext } from "../context/TwitchAPIContext";
 import { ChannelInfoInterface, ChannelInterface } from "../interface/channel";
 import { Version } from "../interface/twitchAPI";
 import { chatInfoReducer } from "../reducer/chatInfo";
+import useAlert from "./useAlert";
 
 export default function useChannelInfo() {
     const twitchAPI = useTwitchAPIContext();
+    const { addAlert } = useAlert();
     const [ channelInfoObject, dispatchChannelInfo ] = React.useReducer(chatInfoReducer, {
         globalBadges: new Map<string, Version>(),
         channelBadges: new Map<string, Version>(),
@@ -75,12 +78,12 @@ export default function useChannelInfo() {
     }, [isGlobalBadgesSuccess, isChannelChatBadgesSuccess, isCheermotesSuccess]);
 
     React.useEffect(() => {
-        if (!User) return;
+        if (!User || User.data.length === 0) {
+            addAlert({serverity: 'warning', message: t('alert.channel_not_found')});
+            return;
+        }
 
         const data = User.data[0];
-
-        if(typeof data === 'undefined') return;
-        
         const id = data.id;
 
         setChannelInfo({

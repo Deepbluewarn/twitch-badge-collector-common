@@ -24,6 +24,7 @@
         "no_connect_channel": "No channels are connected.",
         "version_mismatch": "Extension Version mismatch. Unexpected errors may occur.",
         "network_error": "Request failed.",
+        "channel_not_found": "Channel info not found.",
         "notice_1": "If the filter function does not work properly, please refer to the link below."
     },
     "common": {

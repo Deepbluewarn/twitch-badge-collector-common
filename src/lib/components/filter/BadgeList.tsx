@@ -153,13 +153,13 @@ export default function BadgeList(props: {
     }, [UDGlobalBadges]);
 
     React.useEffect(() => {
-        if(!User) return;
+        if(!User || User.data.length === 0) return;
 
         setUserId(User.data[0].id);
     }, [User]);
 
     React.useEffect(() => {
-        if(!UDChannelChatBadges || !User) return;
+        if(!UDChannelChatBadges || (!User || User.data.length === 0)) return;
 
         const badgesArray = badgesToArray(UDChannelChatBadges);
         const channelName = User.data[0].display_name;
