@@ -1,6 +1,7 @@
 import React, { SetStateAction, useContext } from "react";
 import { ChannelInfoInterface, ChannelInterface } from "../interface/channel";
 import { ChatInfoObjects, ChatInfoReducerAction } from "../interface/chatInfoObjects";
+import { GetUser } from "../interface/twitchAPI";
 
 export const ChannelInfoContext = React.createContext<{
     channelInfoObject: ChatInfoObjects, 
@@ -8,7 +9,8 @@ export const ChannelInfoContext = React.createContext<{
     channelInfo?: ChannelInfoInterface,
     isChannelInfoObjSuccess?: boolean,
     channel: ChannelInterface | undefined,
-    setChannel: React.Dispatch<SetStateAction<ChannelInterface | undefined>>
+    setChannel: React.Dispatch<SetStateAction<ChannelInterface | undefined>>,
+    User: GetUser | undefined
 } | undefined>(undefined);
 
 export function useChannelInfoContext() {

@@ -40,7 +40,7 @@ export default function ChatSaver(props: { env: ENV }) {
   const { t } = useTranslation();
   const { globalSetting, dispatchGlobalSetting } = useGlobalSettingContext();
   const [bgColor, setBgColor] = useState(useTheme<CustomTheme>().colors.remoteBgColor);
-  const { channelInfoObject, dispatchChannelInfo, channel, setChannel } =
+  const { channelInfoObject, dispatchChannelInfo, channel, setChannel, User } =
     useChannelInfo();
   const [channelChatListMap, setChannelChatListMap] = React.useState<
     Map<string, ChannelChatList>
@@ -435,7 +435,7 @@ export default function ChatSaver(props: { env: ENV }) {
 
   return (
     <ChannelInfoContext.Provider
-      value={{ channelInfoObject, dispatchChannelInfo, channel, setChannel }}
+      value={{ channelInfoObject, dispatchChannelInfo, channel, setChannel, User }}
     >
       <UserColorContext.Provider value={userColorMapRef}>
         <Dialog

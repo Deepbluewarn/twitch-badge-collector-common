@@ -91,5 +91,5 @@ export default function useChannelInfo() {
         setUserId(id);
     }, [User]);
 
-    return { channelInfoObject, dispatchChannelInfo, channelInfo, isChannelInfoObjSuccess, channel, setChannel };
+    return { channelInfoObject, dispatchChannelInfo, channelInfo, isChannelInfoObjSuccess, channel, setChannel, User };
 }

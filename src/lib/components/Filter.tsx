@@ -18,7 +18,7 @@ import { ArrayFilterList } from './filter/ArrayFilterList';
 
 export default function Filter() {
     const { arrayFilter, setArrayFilter } = useArrayFilterContext();
-    const { channelInfoObject, dispatchChannelInfo, channel, setChannel } = useChatInfoObjects();
+    const { channelInfoObject, dispatchChannelInfo, channel, setChannel, User } = useChatInfoObjects();
     const [filterInputList, setFilterInputList] = React.useState<ArrayFilterInterface[]>([]);
     const filterInputListRef = React.useRef<ArrayFilterInterface[]>([]);
     const filterBroadcastChannel = React.useRef<BroadcastChannel<ArrayFilterMessageInterface>>(new BroadcastChannel('ArrayFilter'));
@@ -48,7 +48,7 @@ export default function Filter() {
     }, [arrayFilter]);
 
     return (
-        <ChannelInfoContext.Provider value={{ channelInfoObject, dispatchChannelInfo, channel, setChannel }}>
+        <ChannelInfoContext.Provider value={{ channelInfoObject, dispatchChannelInfo, channel, setChannel, User }}>
             <Stack spacing={2} sx={{minHeight: '0'}}>
                 <Card
                     sx={{
