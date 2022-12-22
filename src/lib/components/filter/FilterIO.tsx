@@ -61,6 +61,8 @@ export function ImportFilter() {
                             newCategory = 'badge';
                         }else if(category === 'login_name'){
                             newCategory = 'name';
+                        }else{
+                            newCategory = category;
                         }
 
                         newArrayFilter.filterType = v1_filter.filter_type;
