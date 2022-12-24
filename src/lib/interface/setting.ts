@@ -10,8 +10,15 @@ export type LanguageOptionsType = typeof LanguageOptions[number] | undefined;
 export type FontSizeOptionsType = typeof FontSizeOptions[number] | undefined;
 export type PositionOptionsType = typeof PositionOptions[number] | undefined;
 export type ToggleOptionsType = typeof ToggleOptions[number] | undefined;
+export type NumberOptionsType = number | undefined;
 
-export type SettingOptions = LanguageOptionsType | FontSizeOptionsType | PositionOptionsType | ToggleOptionsType;
+export type SettingOptions = 
+    LanguageOptionsType | 
+    FontSizeOptionsType | 
+    PositionOptionsType | 
+    ToggleOptionsType | 
+    NumberOptionsType;
+
 export type SettingCategory = 
     'language' | 
     'chatFontSize' | 
@@ -21,6 +28,7 @@ export type SettingCategory =
     'player' |
     'chatDisplayMethod'|
     'pointBoxAuto' |
+    'maximumNumberChats' |
     'miniChatTime' |
     'miniLanguage' |
     'miniFontSize';
@@ -38,6 +46,7 @@ export interface Setting {
     darkTheme : ToggleOptionsType
     position : PositionOptionsType
     chatTime : ToggleOptionsType
+    maximumNumberChats: NumberOptionsType
 
     // 웹 설정
 

@@ -20,7 +20,8 @@ export default function useGlobalSetting(env: ENV) {
         darkTheme: getThemePrefer() ? 'on' : 'off',
         position: 'up',
         chatTime: 'on',
-        player: 'off'
+        player: 'on',
+        maximumNumberChats: 100
     } as Setting;
 
     const [globalSetting, dispatchGlobalSetting] =
@@ -42,6 +43,10 @@ export default function useGlobalSetting(env: ENV) {
         dispatchGlobalSetting({
             type: "chatTime",
             value: setting.chatTime,
+        });
+        dispatchGlobalSetting({
+            type: 'maximumNumberChats',
+            value: setting.maximumNumberChats
         });
         dispatchGlobalSetting({
             type: "miniLanguage",
@@ -68,6 +73,7 @@ export default function useGlobalSetting(env: ENV) {
                 "pointBoxAuto",
                 "darkTheme",
                 "chatTime",
+                'maximumNumberChats',
                 "miniLanguage",
                 "miniFontSize",
                 "miniChatTime",
@@ -79,6 +85,7 @@ export default function useGlobalSetting(env: ENV) {
                     pointBoxAuto: res.pointBoxAuto,
                     darkTheme: res.darkTheme,
                     chatTime: res.chatTime,
+                    maximumNumberChats: res.maximumNumberChats as number,
                     miniChatTime: res.miniChatTime,
                     miniLanguage: res.miniLanguage,
                     miniFontSize: res.miniFontSize,
@@ -99,6 +106,7 @@ export default function useGlobalSetting(env: ENV) {
                 pointBoxAuto: globalSetting.pointBoxAuto,
                 darkTheme: globalSetting.darkTheme,
                 chatTime: globalSetting.chatTime,
+                maximumNumberChats: globalSetting.maximumNumberChats,
                 miniLanguage: globalSetting.miniLanguage,
                 miniFontSize: globalSetting.miniFontSize,
                 miniChatTime: globalSetting.miniChatTime,
