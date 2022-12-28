@@ -174,6 +174,25 @@ export interface Tiers {
     "show_in_bits_card": boolean
 }
 
+export interface GetUsersFollows {
+    total: number,
+    data: [
+        {
+            from_id: string,
+            from_login: string,
+            from_name: string,
+            to_id: string,
+            to_login: string,
+            to_name: string,
+            followed_at: string,
+            pagination: {
+                cursor: string
+            },
+            cursor: string
+        }
+    ]
+}
+
 export interface UDGlobalChatBadges {
     badge_sets: {
         [key:string]: {
@@ -181,25 +200,29 @@ export interface UDGlobalChatBadges {
         }
     }
 }
+export const TypeArr = ["include", "exclude", "sleep"] as const;
+export type FilterType = typeof TypeArr[number];
+
+export const ChannelChatBadgesCategoryArr = ['bits', 'subscriber'];
+export type ChannelChatBadgesCategory = typeof ChannelChatBadgesCategoryArr[number];
+
 export interface UDChannelChatBadges {
     badge_sets: {
-        bits: {
-            versions: UDVersion
-        },
-        subscriber: {
+        [key in ChannelChatBadgesCategory]: {
             versions: UDVersion
         }
     }
 }
-export interface UDVersion{
-    [key: number]: {
-        click_action: string,
-        click_url: string,
-        description: string,
-        image_url_1x: string,
-        image_url_2x: string,
-        image_url_4x: string,
-        last_updated: null
-        title: string,
-    }
+export interface UDVersion {
+    [key: number]: UDVersionObject
+}
+export interface UDVersionObject {
+    click_action: string,
+    click_url: string,
+    description: string,
+    image_url_1x: string,
+    image_url_2x: string,
+    image_url_4x: string,
+    last_updated: null
+    title: string,
 }

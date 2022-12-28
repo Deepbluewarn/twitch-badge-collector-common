@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { ChannelNameType } from "../interface/channel";
-import { ChatBadges, EmoteSet, GetClips, GetFollowedStreams, GetUser, GetVideos, Tiers, UDChannelChatBadges, UDGlobalChatBadges, Version } from "../interface/twitchAPI";
+import { ChatBadges, EmoteSet, GetClips, GetFollowedStreams, GetUser, GetUsersFollows, GetVideos, Tiers, UDChannelChatBadges, UDGlobalChatBadges, Version } from "../interface/twitchAPI";
 
 export default function useTwitchAPI(dev: boolean) {
 
@@ -117,6 +117,12 @@ export default function useTwitchAPI(dev: boolean) {
         return cmMap;
     }, []);
 
+    const fetchUsersFollows = React.useCallback(async (from_id: string, to_id: string) => {
+        const { data } = await instance.get(`/api/users/follows?from_id=${from_id}&to_id=${to_id}`);
+
+        return data as GetUsersFollows;
+    }, []);
+
     const badgeDataToMap = React.useCallback((badges: ChatBadges) => {
         const badge_data = badges.data;
         let badges_map: Map<string, Version> = new Map();
@@ -141,7 +147,8 @@ export default function useTwitchAPI(dev: boolean) {
         fetchUDGlobalChatBadges,
         fetchUDChannelChatBadges,
         fetchEmoteSets,
-        fetchCheermotes
+        fetchCheermotes,
+        fetchUsersFollows
     };
 }
 
@@ -156,4 +163,5 @@ export interface TwitchAPIHooks {
     fetchUDChannelChatBadges: (broadcaster_id: string) => Promise<UDChannelChatBadges>,
     fetchEmoteSets: (emote_sets_id: string[]) => Promise<Map<string, EmoteSet>>,
     fetchCheermotes: (broadcaster_id: string) => Promise<Map<string, Tiers[]>>,
+    fetchUsersFollows: (from_id: string, to_id: string) => Promise<GetUsersFollows>
 }
