@@ -8,6 +8,19 @@ export function trim_hash(str: string) {
     }
     return c1;
 }
+export function getSubscriberBadgeTier(badge: string | undefined) {
+    if(typeof badge === 'undefined' || !badge) return;
+
+    const badgeArr = badge.split('/');
+    if(badgeArr[0] !== 'subscriber') return;
+
+    const month = badgeArr[1]; 
+    if(typeof month === 'undefined') return;
+
+    const monthLen = month.length;
+
+    return monthLen === 4 ? month[0] : (monthLen === 1 || monthLen === 2) ? '1' : '';
+}
 export function badgeUuidFromURL(url:string){
     let badge_uuid:string = '';
 
