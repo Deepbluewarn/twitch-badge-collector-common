@@ -1,12 +1,23 @@
-import React, { memo } from "react";
-import { CommonUserstate } from "tmi.js";
+import React, { memo, useEffect } from "react";
+import { BadgeInfo, CommonUserstate } from "tmi.js";
 import { styled } from "@mui/material/styles";
 import { grey } from '@mui/material/colors';
+import Tooltip from "@mui/material/Tooltip";
+import Modal from "@mui/material/Modal";
+import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
+import CloseIcon from '@mui/icons-material/Close';
 import ChatStyleComp from "./message";
 import { MessageInterface } from "../../interface/chat";
 import { useReadableColor } from "../../hooks/useReadableColor";
 import { useGlobalSettingContext } from "../../context/GlobalSetting";
 import { useChannelInfoContext } from "../../context/ChannelInfoContext";
+import { ChannelChatBadgesCategory, ChannelChatBadgesCategoryArr, UDVersion, UDVersionObject } from "../../interface/twitchAPI";
+import { useQuery } from "@tanstack/react-query";
+import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
+import { getSubscriberBadgeTier } from "../../utils/utils";
+import { UserDetail } from "../login/profile";
+import Box from "@mui/material/Box";
 
 interface ChatProps {
     msg: MessageInterface;
@@ -15,9 +26,11 @@ interface ChatProps {
 const Chat = ((props: ChatProps) => {
     let loginName = '';
 
-    if(props.msg.type === 'message' || 'announcement'){
+    const msgType = props.msg.type;
+
+    if(msgType === 'message' || msgType === 'announcement'){
         loginName = props.msg.userstate!.username;
-    }else if(props.msg.type === 'userNotice'){
+    }else if(msgType === 'userNotice'){
         loginName = props.msg.userstate!.login;
     }
 
@@ -30,10 +43,13 @@ const Chat = ((props: ChatProps) => {
             <Badges 
                 key={props.msg.userstate?.["badges-raw"]}
                 badgesRaw={props.msg.userstate?.["badges-raw"]} 
+                badgeInfo={props.msg.userstate?.["badge-info"]}
             />
             <Author 
                 key={loginName}
                 loginName={loginName}
+                badgesRaw={props.msg.userstate?.["badges-raw"]} 
+                badgeInfo={props.msg.userstate?.["badge-info"]}
                 displayName={props.msg.userstate!["display-name"] || ''}
                 msgType={props.msg.userstate!['message-type']}
                 defaultColor={props.msg.userstate!.color}
@@ -112,33 +128,65 @@ const BadgeStyle = styled('span')({
         verticalAlign: 'baseline',
     }
 })
-
-const Badges = memo((props: {badgesRaw: string | undefined}) => {
+const Badges = memo((props: {badgesRaw: string | undefined, badgeInfo: BadgeInfo | undefined}) => {
     const { channelInfoObject } = useChannelInfoContext();
 
     const globalBadges = channelInfoObject.globalBadges;
     const channelBadges = channelInfoObject.channelBadges;
+    const udGlobalBadges = channelInfoObject.udGlobalBadges.badge_sets;
+    const udChannelBadges = channelInfoObject.udChannelBadges.badge_sets;
+
     const badgesRaw = props.badgesRaw;
+    const badgeInfo = props.badgeInfo;
 
     if (!badgesRaw || typeof badgesRaw === 'undefined' || badgesRaw === '') return null;
     let badgesArr = badgesRaw.split(',');
 
-    if (!channelBadges || !globalBadges) {
+    if (!channelBadges || !globalBadges || !udGlobalBadges || !udChannelBadges) {
         return <span></span>
     }
 
-    var badges = badgesArr.reduce(function (result: JSX.Element[], badge) {
+    const badgeTooltipTitle = (udVersion: UDVersionObject | undefined, badge: string, badgeId: string) => {
+        if(typeof udVersion === 'undefined' || !udVersion) return;
+
+        let title = '';
+
+        if(badgeId === 'subscriber'){
+            title = `티어 ${getSubscriberBadgeTier(badge)}, ${udVersion.title}${badgeInfo ? ` (${badgeInfo.subscriber}개월)` : ''}`;
+        }else{
+            title = udVersion.title;
+        }
+
+        return title;
+    }
+
+    const badges = badgesArr.reduce(function (result: JSX.Element[], badge) {
+        const badgeSplit = badge.split('/');
+        const id: ChannelChatBadgesCategory = badgeSplit[0];
+        const version = (badgeSplit[1] as unknown) as number;
         const bg = channelBadges.get(badge) || globalBadges.get(badge);
+        const _udChannelBadges = ChannelChatBadgesCategoryArr.includes(id) ? udChannelBadges[id] : undefined;
+        const _udGlobalBadges = udGlobalBadges[id];
+        const udbg =
+            (typeof _udChannelBadges !== 'undefined' ? _udChannelBadges.versions[version] : undefined) ||
+            (typeof _udGlobalBadges !== 'undefined' ? _udGlobalBadges.versions[version] : undefined)
 
         if (typeof bg !== 'undefined') {
             result.push(
-                <img
-                    className="chat-badge"
-                    src={bg.image_url_1x}
-                    srcSet={`${bg.image_url_1x} 1x, ${bg.image_url_2x} 2x, ${bg.image_url_4x} 4x`}
-                    key={bg.image_url_1x}
-                    alt='Chat Badge'
-                />
+                <Tooltip
+                    placement='top'
+                    arrow
+                    key={badge}
+                    title={badgeTooltipTitle(udbg, badge, id)}
+                >
+                    <img
+                        className="chat-badge"
+                        src={bg.image_url_1x}
+                        srcSet={`${bg.image_url_1x} 1x, ${bg.image_url_2x} 2x, ${bg.image_url_4x} 4x`}
+                        key={bg.image_url_1x}
+                        alt='Chat Badge'
+                    />
+                </Tooltip>
             )
         }
         return result;
@@ -154,16 +202,31 @@ const Badges = memo((props: {badgesRaw: string | undefined}) => {
 const AuthorStyle = styled('span')(({theme}) => ({
     color: theme.palette.text.primary, 
     verticalAlign: 'inherit',
+    cursor: 'pointer',
 
     '.chat-author-disp': {
         fontWeight: '700',
         marginRight: '4px',
     }
-}))
+}));
+
+const ModalBox = styled(Box)(({theme}) => ({
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary, 
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '80%',
+    maxWidth: 300,
+    transform: 'translate(-50%, -50%)',
+    padding: '8px'
+}));
 
 const Author = memo((props: {
     loginName: string,
     displayName: string,
+    badgesRaw: string | undefined,
+    badgeInfo: BadgeInfo | undefined,
     msgType: string | undefined,
     defaultColor: string | undefined
 }) => {
@@ -172,12 +235,57 @@ const Author = memo((props: {
     const msgType = props.msgType;
     const defaultColor = props.defaultColor;
     const [color, setColor] = React.useState(defaultColor);
+    const [openModal, setOpenModal] = React.useState(false);
     const { getColor } = useReadableColor(loginName, defaultColor);
+    const { channelInfo, channel } = useChannelInfoContext();
     const {globalSetting} = useGlobalSettingContext();
+    const twitchAPI = useTwitchAPIContext();
+
+    const handleModalOpen = () => setOpenModal(true);
+    const handleModalClose = () => setOpenModal(false);
+
+    const badgesRaw = props.badgesRaw;
+    const badgeInfo = props.badgeInfo;
 
     let loginNameSpan = null;
     let separator = null;
 
+    const {data: ChannelUser, isSuccess: isChannelUserSuccess} = useQuery(
+        ['User', channel],
+        () => twitchAPI.fetchUser(channel!.type, channel!.value),
+        {
+            enabled: 
+                loginName !== '' && 
+                typeof channel !== 'undefined' && 
+                channel &&
+                openModal
+        }
+    );
+
+    const {data: User, isSuccess: isUserSuccess} = useQuery(
+        ['User', loginName],
+        () => twitchAPI.fetchUser('login', loginName),
+        {
+            enabled: loginName !== '' && openModal
+        }
+    );
+
+    const {data: UsersFollows, isSuccess: isUsersFollowsSuccess} = useQuery(
+        ['UsersFollows', loginName, channel?.value],
+        () => twitchAPI.fetchUsersFollows(User!.data[0].id, ChannelUser!.data[0].id),
+        {
+            enabled: 
+                isUserSuccess &&
+                isChannelUserSuccess &&
+                typeof User !== 'undefined' && 
+                typeof ChannelUser !== 'undefined' && 
+                User && ChannelUser &&
+                User.data.length > 0 &&
+                ChannelUser.data.length > 0 &&
+                channel && 
+                openModal
+        }
+    )
     if (loginName && loginName !== displayName.toLowerCase()) {
         loginNameSpan = <span>{`(${loginName})`}</span>
     }
@@ -189,35 +297,52 @@ const Author = memo((props: {
     }, [globalSetting.darkTheme]);
 
     return (
-        <AuthorStyle className="author" sx={{color}}>
-            <span className="chat-author-disp">{displayName}</span>
-            <span className="chat-author-login">{loginNameSpan}</span>
-            <span className="chat-message-separator">{separator}</span>
-        </AuthorStyle>
+        <>
+            <AuthorStyle className="author" sx={{ color }} onClick={handleModalOpen}>
+                <span className="chat-author-disp">{displayName}</span>
+                <span className="chat-author-login">{loginNameSpan}</span>
+                <span className="chat-message-separator">{separator}</span>
+            </AuthorStyle>
+            <Modal
+                open={openModal}
+                onClose={handleModalClose}
+            >
+                <ModalBox>
+                    <Stack direction='row' justifyContent='space-between' spacing={1}>
+                        <Stack sx={{margin: '8px'}}>
+                            {
+                                User && isUsersFollowsSuccess ? (
+                                    <UserDetail
+                                        userFollows={UsersFollows}
+                                        profileImgUrl={User.data[0].profile_image_url}
+                                        displayName={User.data[0].display_name}
+                                        loginName={User.data[0].login}
+                                        badgesRaw={badgesRaw}
+                                        badgeInfo={badgeInfo}
+                                    />
+                                ) : (
+                                    <Stack
+                                        justifyContent='center'
+                                        alignContent='center'
+                                    >
+                                        <CircularProgress />
+                                    </Stack>
+                                )
+                            }
+                        </Stack>
+                        <Stack>
+                            <CloseIcon onClick={handleModalClose} />
+                        </Stack>
+                    </Stack>
+                </ModalBox>
+            </Modal>
+        </>
     )
 });
 
 const MessageContainerStyle = styled('span')(({theme}) => ({
     verticalAlign: 'inherit',
     color: theme.palette.text.primary,
-    '.emoticon-container': {
-        overflowWrap: 'anywhere',
-        boxSizing: 'border-box',
-        border: '0',
-        font: 'inherit',
-        padding: '0',
-        margin: '-.5rem 0',
-        verticalAlign: 'middle',
-        alignItems: 'center',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        fontStyle: 'normal',
-        height: '1.75rem',
-        justifyContent: 'center',
-        outline: 'none',
-        pointerEvents: 'all',
-        width: '1.75rem',
-    },
     '.action': {
         fontStyle: 'italic',
     },
@@ -228,6 +353,54 @@ const MessageContainerStyle = styled('span')(({theme}) => ({
         backgroundColor: theme.palette.warning.main,
     }
 }))
+
+const EmoticonContainer = styled('div')({
+    overflowWrap: 'anywhere',
+    boxSizing: 'border-box',
+    border: '0',
+    font: 'inherit',
+    padding: '0',
+    margin: '-.5rem 0',
+    verticalAlign: 'middle',
+    alignItems: 'center',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    fontStyle: 'normal',
+    height: '1.75rem',
+    justifyContent: 'center',
+    outline: 'none',
+    pointerEvents: 'all',
+    width: '1.75rem',
+});
+
+const EmoticonContainerWithTooltip = (props: { children: React.ReactNode, emoteCode: string }) => {
+    return (
+        <Tooltip
+            title={props.emoteCode}
+            key={props.emoteCode}
+            arrow
+            placement='top'
+        >
+            <EmoticonContainer>
+                {props.children}
+            </EmoticonContainer>
+        </Tooltip>
+    )
+}
+
+interface resolveEmoticon {
+    id: string;
+    code: string;
+}
+interface resolveCheermote {
+    prefix: string;
+    bits: number;
+}
+interface resolveArrayInterface {
+    type: 'link' | 'emote' | 'cheermote';
+    idx: number[];
+    value: resolveCheermote | resolveEmoticon | string;
+}
 
 const Message = memo((props: {
     message: string,
@@ -268,21 +441,21 @@ const Message = memo((props: {
         }
 
         if (info.type === 'emote') {
-            const emoteId = info.value;
-            const emote_link = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteId}/default/dark`;
+            const emoteRes = info.value as resolveEmoticon;
+            const emote_link = `https://static-cdn.jtvnw.net/emoticons/v2/${emoteRes.id}/default/dark`;
 
             res.push(
-                <div key={key++} className="emoticon-container">
+                <EmoticonContainerWithTooltip emoteCode={emoteRes.code} key={key++}>
                     <img className="emoticon"
                         src={`${emote_link}/1.0`}
                         alt=""
                         srcSet={`${emote_link}/1.0 1x, ${emote_link}/2.0 2x, ${emote_link}/3.0 4x`} />
-                </div>
+                </EmoticonContainerWithTooltip>
             )
         } else if (info.type === 'cheermote') {
 
-            const prefix = info.value[0];
-            const bits = info.value[1];
+            const prefix = (info.value as resolveCheermote).prefix;
+            const bits = (info.value as resolveCheermote).bits;
 
             const min_bits = getMinBits(bits);
             const tier = getTierByMinBits(prefix, min_bits, channelInfoObject.cheermotes);
@@ -294,9 +467,9 @@ const Message = memo((props: {
             }
             res.push(
                 <span key={key++} className="bits-amount" style={style}>
-                    <div className="emoticon-container">
+                    <EmoticonContainerWithTooltip emoteCode={`${prefix}${bits}`}>
                         <img className="emoticon" src={links[1]} alt="" srcSet={`${links[0]} 1x, ${links[1]} 2x, ${links[2]} 4x`} />
-                    </div>
+                    </EmoticonContainerWithTooltip>
                     {bits.toString()}
                 </span>
             );
@@ -341,16 +514,25 @@ function resolveMotes(message: string, bits: string,
 
         if(!message) return [];
 
-    const res = [];
+    const res: resolveArrayInterface[] = [];
     const words = message.split(' ');
     let lastWordEndIdx = 0;
     const emote = emotes || {};
     const emoteEmpty = Object.keys(emote).length === 0 && Object.getPrototypeOf(emote) === Object.prototype;
 
     if (!emoteEmpty) {
-        Object.keys(emote).forEach(e => {
-            for (let idx of emote[e]) {
-                res.push({ type: 'emote', value: e, idx: idx.split('-').map(e => parseInt(e)) });
+        Object.keys(emote).forEach(emoteId => {
+            for (let idxStr of emote[emoteId]) {
+                const idxArr = idxStr.split('-').map(e => parseInt(e));
+
+
+                res.push({
+                    type: 'emote', 
+                    value: {
+                        id: emoteId, code: message.slice(idxArr[0], idxArr[1] + 1)
+                    },
+                    idx: idxStr.split('-').map(e => parseInt(e))
+                });
             }
         });
     }
@@ -358,13 +540,13 @@ function resolveMotes(message: string, bits: string,
     for (let w = 0; w < words.length; w++) {
         const word = words[w];
         const idx = [lastWordEndIdx, lastWordEndIdx + word.length - 1];
-        const cheer = checkCheermote(word, cheerMotes);
+        const cheer = resolveCheermote(word, cheerMotes);
 
-        if (bits && cheer.length !== 0) {
+        if (bits && cheer !== null) {
             res.push({ type: 'cheermote', value: cheer, idx: idx });
         } else if (emoteEmpty && emoteSets && emoteSets.has(word)) {
             const emote_id = emoteSets.get(word).id;
-            res.push({ type: 'emote', value: emote_id, idx: idx });
+            res.push({ type: 'emote', value: {id: emote_id, code: word}, idx: idx });
         }
         lastWordEndIdx = lastWordEndIdx + word.length + 1;
     }
@@ -372,17 +554,17 @@ function resolveMotes(message: string, bits: string,
     return res;
 }
 
-function checkCheermote(cheerText: string, cheerMotes: Map<string, any>) {
+function resolveCheermote(cheerText: string, cheerMotes: Map<string, any>) {
     const bits_regex = /([1-9]+[0-9]*)$/;
     const cheer = cheerText.split(bits_regex);
 
-    return cheerMotes.has(cheer[0]) ? [cheer[0], cheer[1]] : [];
+    return cheerMotes.has(cheer[0]) ? {prefix: cheer[0], bits: (cheer[1] as unknown) as number} as resolveCheermote : null;
 }
 
 const linkRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/gi;
 
 function resolveLink(link_text: string) {
-    const arr = [];
+    const arr: resolveArrayInterface[] = [];
     let match;
 
     while ((match = linkRegex.exec(link_text)) !== null) {
