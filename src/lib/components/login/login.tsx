@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useAuthContext } from "../../context/Auth";
-import Profile from "./profile";
+import { Profile } from "./profile";
 
 export default function Login() {
     const auth = useAuthContext();
