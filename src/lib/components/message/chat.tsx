@@ -18,6 +18,7 @@ import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
 import { getSubscriberBadgeTier } from "../../utils/utils";
 import { UserDetail } from "../login/profile";
 import Box from "@mui/material/Box";
+import { useTranslation } from "react-i18next";
 
 interface ChatProps {
     msg: MessageInterface;
@@ -138,6 +139,8 @@ const Badges = memo((props: {badgesRaw: string | undefined, badgeInfo: BadgeInfo
 
     const badgesRaw = props.badgesRaw;
     const badgeInfo = props.badgeInfo;
+    
+    const { t } = useTranslation();
 
     if (!badgesRaw || typeof badgesRaw === 'undefined' || badgesRaw === '') return null;
     let badgesArr = badgesRaw.split(',');
@@ -152,7 +155,7 @@ const Badges = memo((props: {badgesRaw: string | undefined, badgeInfo: BadgeInfo
         let title = '';
 
         if(badgeId === 'subscriber'){
-            title = `티어 ${getSubscriberBadgeTier(badge)}, ${udVersion.title}${badgeInfo ? ` (${badgeInfo.subscriber}개월)` : ''}`;
+            title = `${t('common.tier')} ${getSubscriberBadgeTier(badge)}, ${udVersion.title}${badgeInfo ? ` (${badgeInfo.subscriber} ${t('common.months')})` : ''}`;
         }else{
             title = udVersion.title;
         }

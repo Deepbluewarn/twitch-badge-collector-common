@@ -25,7 +25,8 @@
         "version_mismatch": "Extension Version mismatch. Unexpected errors may occur.",
         "network_error": "Request failed.",
         "channel_not_found": "Channel info not found.",
-        "notice_1": "If the filter function does not work properly, please refer to the link below."
+        "notice_1": "If the filter does not work properly, please refer to the link below.",
+        "extensionNotice": "This is the extension settings page. Does not apply to web version."
     },
     "common": {
         "en": "English",
@@ -74,7 +75,11 @@
         "show_more": "Show More",
         "live": "Live",
         "replay": "Replay",
-        "noticeBeta": "This is a beta version. Unexpected errors may occur."
+        "noticeBeta": "This is a beta version. Unexpected errors may occur.",
+        "tier": "Tier",
+        "months": "Months",
+        "followSince": "Following Since {{date}}",
+        "subscribeSince": "Subbed for {{month}} Months"
     },
     "filter": {
         "category": {

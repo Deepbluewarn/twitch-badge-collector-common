@@ -4,6 +4,7 @@ import { Typography } from "@mui/material";
 import { BadgeInfo } from "tmi.js";
 import { getSubscriberBadgeTier } from "../../utils/utils";
 import { GetUsersFollows } from "../../interface/twitchAPI";
+import { useTranslation } from "react-i18next";
 
 export function Profile(props: {
     profileImgUrl: string | undefined,
@@ -29,8 +30,9 @@ export function UserDetail(props: {
     const badgeInfo = props.badgeInfo;
     const badgesRaw = props.badgesRaw;
 
-    let tier = '';
+    const { t } = useTranslation();
 
+    let tier = '';
 
     if (typeof badgesRaw !== 'undefined' && badgesRaw && badgesRaw !== '') {
         const badges = badgesRaw.split(',');
@@ -52,10 +54,10 @@ export function UserDetail(props: {
             <Stack direction='column'>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{`${props.displayName} (${props.loginName})`}</Typography>
                 {userFollows && typeof userFollows !== 'undefined' && userFollows.data.length > 0 ? (
-                    <Typography variant="body2">{`${getFollowedDate(userFollows)}부터 팔로우 중`}</Typography>
+                    <Typography variant="body2">{`${t('common.followSince', {date: getFollowedDate(userFollows)})}`}</Typography>
                 ) : null}
                 {badgeInfo && typeof badgeInfo !== 'undefined' && tier && tier !== '' ? (
-                    <Typography variant="body2">{`티어 ${tier}, ${badgeInfo.subscriber}개월 동안 구독 중`}</Typography>
+                    <Typography variant="body2">{`${t('common.tier')} ${tier}, ${t('common.subscribeSince', {month: badgeInfo.subscriber})}`}</Typography>
                 ) : null}
             </Stack>
         </Stack>

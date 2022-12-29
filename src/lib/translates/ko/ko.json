@@ -75,7 +75,11 @@
         "show_more": "더 보기",
         "live": "생방송",
         "replay": "다시보기",
-        "noticeBeta": "베타 버전입니다. 예상치 못한 오류가 발생할 수 있습니다."
+        "noticeBeta": "베타 버전입니다. 예상치 못한 오류가 발생할 수 있습니다.",
+        "tier": "티어",
+        "months": "개월",
+        "followSince": "{{date}}부터 팔로우 중",
+        "subscribeSince": "{{month}}개월 동안 구독 중"
     },
     "filter": {
         "category": {
