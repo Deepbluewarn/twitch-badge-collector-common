@@ -19,6 +19,7 @@ import { getSubscriberBadgeTier } from "../../utils/utils";
 import { UserDetail } from "../login/profile";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
+import { ModalBox } from "../common";
 
 interface ChatProps {
     msg: MessageInterface;
@@ -213,17 +214,6 @@ const AuthorStyle = styled('span')(({theme}) => ({
     }
 }));
 
-const ModalBox = styled(Box)(({theme}) => ({
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary, 
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    width: '80%',
-    maxWidth: 300,
-    transform: 'translate(-50%, -50%)',
-    padding: '8px'
-}));
 
 const Author = memo((props: {
     loginName: string,
