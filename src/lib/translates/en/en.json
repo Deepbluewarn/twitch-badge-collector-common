@@ -81,7 +81,7 @@
         "followSince": "Following Since {{date}}",
         "subscribeSince": "Subbed for {{month}} Months",
         "channelNotFound": "Channel name not found.",
-        "requestChannelName": "Please enter the channel name directly",
+        "requestChannelName": "Please enter the channel name directly.",
         "channelName": "Channel Name",
         "confirm": "Confirm"
     },
