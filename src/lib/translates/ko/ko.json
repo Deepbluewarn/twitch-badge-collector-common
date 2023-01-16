@@ -79,7 +79,11 @@
         "tier": "티어",
         "months": "개월",
         "followSince": "{{date}}부터 팔로우 중",
-        "subscribeSince": "{{month}}개월 동안 구독 중"
+        "subscribeSince": "{{month}}개월 동안 구독 중",
+        "channelNotFound": "채널 이름을 찾을 수 없습니다.",
+        "requestChannelName": "채널 이름을 직접 입력해주세요.",
+        "channelName": "",
+        "confirm": "확인"
     },
     "filter": {
         "category": {
