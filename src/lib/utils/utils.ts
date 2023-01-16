@@ -34,8 +34,8 @@ export function badgeUuidFromURL(url:string){
 export function getRandomString() {
     return Math.random().toString(36).substring(2, 12);
 }
-export function checkChannelValid(channel: string) {
-    return /^[a-zA-Z0-9]*$/i.test(channel);
+export function validateTwitchUsername(name: string){
+    return /^[a-zA-Z0-9_]{4,25}$/.test(name);
 }
 /**
  * Returns a random number between min (inclusive) and max (exclusive)
