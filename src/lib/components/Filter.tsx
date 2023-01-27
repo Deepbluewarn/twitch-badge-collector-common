@@ -67,10 +67,6 @@ export default function Filter() {
                             flex: '1 1 auto',
                         }}
                     >
-                        <Alert severity='warning'>
-                            <span>{t('alert.notice_1')}</span><br />
-                            <a href='https://bit.ly/3fIpe73' target='_blank'>https://bit.ly/3fIpe73</a>
-                        </Alert>
                         <Typography variant="h6">
                             {t('setting.filter.filter_list')}
                         </Typography>
