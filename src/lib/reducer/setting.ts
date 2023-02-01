@@ -13,6 +13,8 @@ export function settingReducer(state: Setting, action: SettingReducerAction): Se
     const copyState = { ...state };
     
     switch(action.type){
+        case "SET_MULTIPLE": 
+            return Object.assign(copyState, action.value);
         case "language":
             copyState.language = action.value as LanguageOptionsType;
             return copyState;

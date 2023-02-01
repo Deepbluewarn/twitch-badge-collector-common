@@ -20,6 +20,7 @@ export type SettingOptions =
     NumberOptionsType;
 
 export type SettingCategory = 
+    'SET_MULTIPLE' | 
     'language' | 
     'chatFontSize' | 
     'darkTheme' | 
@@ -35,7 +36,7 @@ export type SettingCategory =
 
 export interface SettingReducerAction {
     type: SettingCategory;
-    value: SettingOptions;
+    value: Setting | SettingOptions;
 }
 
 export interface Setting {
