@@ -8,7 +8,14 @@ import { ENV } from "../interface/env";
 import { ArrayFilterListInterface } from "../interface/filter";
 import { arrayFiltersEqual, inIframe } from "../utils/utils";
 
-export default function useArrayFilter(env: ENV) {
+/**
+ * 
+ * @param env 
+ * @param readOnly 변경된 globalSetting 값을 확장 프로그램 storage 에 저장할지 여부를 설정합니다. 
+ *                  storage API 의 onChanged Event 의 callback 함수 내에서 값을 업데이트 해야 하는 경우 true 로 설정하세요.
+ * @returns 
+ */
+export default function useArrayFilter(env: ENV, readOnly: boolean) {
     Sentry.addBreadcrumb({
         type: env,
         category: "useArrayFilter",
@@ -22,8 +29,7 @@ export default function useArrayFilter(env: ENV) {
     const { t } = useTranslation();
 
     React.useEffect(() => {
-
-        if (isFilterInitialized.current && env === 'Extension') {
+        if (isFilterInitialized.current && env === 'Extension' && !readOnly) {
             import('webextension-polyfill').then(browser => {
                 browser.storage.local.set({ filter: arrayFilter });
             });

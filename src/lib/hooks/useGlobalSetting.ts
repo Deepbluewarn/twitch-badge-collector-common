@@ -11,7 +11,14 @@ function getThemePrefer() {
     return false;
 }
 
-export default function useGlobalSetting(env: ENV) {
+/**
+ * 
+ * @param env 
+ * @param readOnly 변경된 globalSetting 값을 확장 프로그램 storage 에 저장할지 여부를 설정합니다. 
+ *                  storage API 의 onChanged Event 의 callback 함수 내에서 값을 업데이트 해야 하는 경우 true 로 설정하세요.
+ * @returns 
+ */
+export default function useGlobalSetting(env: ENV, readOnly: boolean) {
     const isIframe = inIframe();
     const localGlobalSetting: Setting = isIframe ? null : getLocalStorageObject('globalSetting');
     const defaultGlobalSetting = {
@@ -28,76 +35,53 @@ export default function useGlobalSetting(env: ENV) {
         useReducer(settingReducer, env === 'Extension' ? {} as Setting : (localGlobalSetting || defaultGlobalSetting));
 
     const updateSetting = (setting: Setting) => {
-        if(env !== 'Extension') return;
-        
+        if (env !== 'Extension') return;
+
         dispatchGlobalSetting({
-            type: "chatDisplayMethod",
-            value: setting.chatDisplayMethod,
-        });
-        dispatchGlobalSetting({ type: "position", value: setting.position });
-        dispatchGlobalSetting({
-            type: "pointBoxAuto",
-            value: setting.pointBoxAuto,
-        });
-        dispatchGlobalSetting({ type: "darkTheme", value: setting.darkTheme });
-        dispatchGlobalSetting({
-            type: "chatTime",
-            value: setting.chatTime,
-        });
-        dispatchGlobalSetting({
-            type: 'maximumNumberChats',
-            value: setting.maximumNumberChats
-        });
-        dispatchGlobalSetting({
-            type: "miniLanguage",
-            value: setting.miniLanguage,
-        });
-        dispatchGlobalSetting({
-            type: "miniFontSize",
-            value: setting.miniFontSize,
-        });
-        dispatchGlobalSetting({
-            type: "miniChatTime",
-            value: setting.miniChatTime,
+            type: 'SET_MULTIPLE',
+            value: setting
         });
     };
 
     useEffect(() => {
-        if(env !== 'Extension') return;
+        if (env !== 'Extension') return;
 
         import('webextension-polyfill').then(browser => {
             browser.storage.local
-            .get([
-                "chatDisplayMethod",
-                "position",
-                "pointBoxAuto",
-                "darkTheme",
-                "chatTime",
-                'maximumNumberChats',
-                "miniLanguage",
-                "miniFontSize",
-                "miniChatTime",
-            ])
-            .then((res) => {
-                updateSetting({
-                    chatDisplayMethod: res.chatDisplayMethod,
-                    position: res.position,
-                    pointBoxAuto: res.pointBoxAuto,
-                    darkTheme: res.darkTheme,
-                    chatTime: res.chatTime,
-                    maximumNumberChats: res.maximumNumberChats as number,
-                    miniChatTime: res.miniChatTime,
-                    miniLanguage: res.miniLanguage,
-                    miniFontSize: res.miniFontSize,
-                } as Setting);
-            });
+                .get([
+                    "chatDisplayMethod",
+                    "position",
+                    "pointBoxAuto",
+                    "darkTheme",
+                    "chatTime",
+                    'maximumNumberChats',
+                    "miniLanguage",
+                    "miniFontSize",
+                    "miniChatTime",
+                ])
+                .then((res) => {
+                    updateSetting({
+                        chatDisplayMethod: res.chatDisplayMethod,
+                        position: res.position,
+                        pointBoxAuto: res.pointBoxAuto,
+                        darkTheme: res.darkTheme,
+                        chatTime: res.chatTime,
+                        maximumNumberChats: res.maximumNumberChats as number,
+                        miniChatTime: res.miniChatTime,
+                        miniLanguage: res.miniLanguage,
+                        miniFontSize: res.miniFontSize,
+                    } as Setting);
+                });
         }).catch(err => {
             console.log('[Common] useGlobalSetting failed import webextension-polyfill err: ', err);
         });
     }, []);
 
+
+
     useEffect(() => {
-        if(env !== 'Extension') return;
+        if (env !== 'Extension' || readOnly) return;
+
 
         import('webextension-polyfill').then(browser => {
             browser.storage.local.set({
