@@ -12,10 +12,12 @@ import { arrayFiltersEqual, inIframe } from "../utils/utils";
  * 
  * @param env 
  * @param readOnly 변경된 globalSetting 값을 확장 프로그램 storage 에 저장할지 여부를 설정합니다. 
- *                  storage API 의 onChanged Event 의 callback 함수 내에서 값을 업데이트 해야 하는 경우 true 로 설정하세요.
+ *                  true 로 설정하면 Extension 의 storage 에 새로운 값을 저장하지 않습니다.
+ *                  만약 storage.onChanged Event 의 callback 함수 내에서 값을 업데이트 해야 하는 경우 true 로 설정하세요.
+ *                  @default true
  * @returns 
  */
-export default function useArrayFilter(env: ENV, readOnly: boolean) {
+export default function useArrayFilter(env: ENV, extStorageReadOnly: boolean = true) {
     Sentry.addBreadcrumb({
         type: env,
         category: "useArrayFilter",
@@ -29,7 +31,7 @@ export default function useArrayFilter(env: ENV, readOnly: boolean) {
     const { t } = useTranslation();
 
     React.useEffect(() => {
-        if (isFilterInitialized.current && env === 'Extension' && !readOnly) {
+        if (isFilterInitialized.current && env === 'Extension' && !extStorageReadOnly) {
             import('webextension-polyfill').then(browser => {
                 browser.storage.local.set({ filter: arrayFilter });
             });
