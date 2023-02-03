@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { ENV } from "../interface/env";
 import { Setting } from "../interface/setting";
 import { settingReducer } from "../reducer/setting";
@@ -32,6 +32,7 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
         player: 'on',
         maximumNumberChats: 100
     } as Setting;
+    const [globalSettingUpdated, setGlobalSettingUpdated] = useState(false);
 
     const [globalSetting, dispatchGlobalSetting] =
         useReducer(settingReducer, env === 'Extension' ? {} as Setting : (localGlobalSetting || defaultGlobalSetting));
@@ -43,6 +44,8 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
             type: 'SET_MULTIPLE',
             value: setting
         });
+
+        setGlobalSettingUpdated(true);
     };
 
     useEffect(() => {
@@ -84,6 +87,7 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
     useEffect(() => {
         if (env !== 'Extension' || extStorageReadOnly) return;
 
+        if(!globalSettingUpdated) return;
 
         import('webextension-polyfill').then(browser => {
             browser.storage.local.set({
@@ -101,5 +105,4 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
     }, [globalSetting]);
 
     return { globalSetting, dispatchGlobalSetting };
-
 }
