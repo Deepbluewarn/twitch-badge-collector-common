@@ -46,6 +46,7 @@ export interface ArrayFilterInterface {
 export interface ArrayFilterListInterface {
     filterType: FilterType;
     id: string;
+    filterNote: string;
     filters: ArrayFilterInterface[];
 }
 

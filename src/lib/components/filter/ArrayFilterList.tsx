@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { GridColDef, GridRenderCellParams, GridRowId, GridToolbarContainer, GridToolbarFilterButton } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
 import { styled } from "@mui/material/styles";
@@ -34,11 +34,12 @@ export function ArrayFilterList() {
     const { arrayFilter, setArrayFilter } = useArrayFilterContext();
     const [selectionModel, setSelectionModel] = React.useState<GridRowId[]>([]);
     const [showDeleteButton, setShowDeleteButton] = React.useState(false);
+    // const [arrayFilterEditButton, setArrayFilterEditButton] = useState(false);
     const { t } = useTranslation();
 
     const columns: GridColDef[] = [
         { 
-            field: 'filters', headerName: t('common.filter'), flex: 0.8, 
+            field: 'filters', headerName: t('common.filter'), flex: 0.6, 
             renderCell: (params: GridRenderCellParams<ArrayFilterInterface[]>) => {
                 if(!params.value) return null;
 
@@ -79,6 +80,19 @@ export function ArrayFilterList() {
             }
         },
         {
+            field: 'filterNote', headerName: "비고", flex: 0.2,
+            renderCell: (params: GridRenderCellParams<string>) => {
+                if(!params.value) return null;
+
+                return (
+                    <Chip
+                        label={params.value}
+                        color='secondary'
+                    />
+                )
+            }
+        },
+        {
             field: 'filterType', headerName: t('common.condition'), flex: 0.2,
             renderCell: (params: GridRenderCellParams<FilterType>) => {
                 if (!params.value) return null;
@@ -106,11 +120,13 @@ export function ArrayFilterList() {
             componentsProps={{ 
                 toolbar: {
                     selectionModel: selectionModel, 
-                    showDeleteButton: showDeleteButton
+                    showDeleteButton: showDeleteButton,
+                    // showEditButton: arrayFilterEditButton
                 }
             }}
             onSelectionModelChange={(ids) => {
                 setShowDeleteButton(ids.length > 0);
+                // setArrayFilterEditButton(ids.length > 0);
                 setSelectionModel(ids);
             }}
             selectionModel={selectionModel}
@@ -119,19 +135,54 @@ export function ArrayFilterList() {
 }
 
 function CustomToolbar(props: {
-    selectionModel: GridRowId[], showDeleteButton: boolean
+    selectionModel: GridRowId[], 
+    showDeleteButton: boolean,
+    // showEditButton: boolean
 }) {
-    
-
     return (
         <GridToolbarContainer>
             <GridToolbarFilterButton />
             <ImportFilter />
             <ExportFilter />
-            <DeleteButton selectionModel={props.selectionModel} showDeleteButton={props.showDeleteButton}></DeleteButton>
+            <DeleteButton selectionModel={props.selectionModel} showDeleteButton={props.showDeleteButton} />
+            {/* <EditArrayFilterButton selectionModel={props.selectionModel} showEditButton={props.showEditButton}/> */}
         </GridToolbarContainer>
     );
 }
+
+// function EditArrayFilterButton(props: {selectionModel: GridRowId[], showEditButton: boolean}){
+//     if (!props.showEditButton) return null;
+
+//     const { arrayFilter, setArrayFilter } = useArrayFilterContext();
+
+//     return (
+//         <CustomToolbarItemStyle direction='row' onClick={() => { editArrayFilter(arrayFilter, setArrayFilter, props.selectionModel) }}>
+//             <span className="material-icons-round">edit</span>
+//             <span>선택 편집</span>
+//         </CustomToolbarItemStyle>
+//     )
+// }
+
+// function editArrayFilter(
+//         arrayFilter: ArrayFilterListInterface[], 
+//         setRows: React.Dispatch<React.SetStateAction<ArrayFilterListInterface[]>>, 
+//         selectionModel: GridRowId[]) 
+//     {
+
+//     console.log('[common] ArrayFilterList editArrayFilter selectionModel: ', selectionModel);
+//     /**
+//      * 0. selectionModel 매개변수에서 편집 대상의 필터 ID 를 추출.
+//      * 1. ArrayFilter 배열을 Map object 로 변환. 이때 key 는 ArrayFilter 의 ID.
+//      * 2. 편집 후 Map object 를 다시 배열 형태로 변환한 다음 setRows 함수로 ArrayFilter 갱신.
+//      */
+
+//     const mArrayFilter = new Map(arrayFilter.map((e)=>[e.id, e]));
+
+//     setRows(row => {
+//         console.log('[common] ArrayFilterList editArrayFilter row: ', row)
+//         return row;
+//     });
+// }
 
 const DeleteButtonStyle = styled('div')({
     color: '#f44336'

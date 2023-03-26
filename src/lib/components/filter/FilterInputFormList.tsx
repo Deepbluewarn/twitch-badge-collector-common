@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { SelectChangeEvent } from '@mui/material/Select';
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -19,6 +16,7 @@ import {
 } from "../../interface/filter";
 import { useArrayFilterContext } from '../../context/ArrayFilter';
 import { nanoid } from 'nanoid';
+import { ArrayFilterCategorySelector, ArrayFilterSelectorType, ArrayFilterTypeSelector } from './ArrayFilterComponents';
 
 export default function FilterInputFormList(
     props: {
@@ -29,6 +27,7 @@ export default function FilterInputFormList(
 ) {
     const { addArrayFilter } = useArrayFilterContext();
     const [arrayFilterType, setArrayFilterType] = React.useState<FilterType>('include');
+    const [arrayFilterNote, setArrayFilterNote] = useState('');
     const [nameFilterAvail, setNameFilterAvail] = React.useState(false);
     const { t } = useTranslation();
 
@@ -45,16 +44,20 @@ export default function FilterInputFormList(
     const onArrayFilterTypeChanged = (event: SelectChangeEvent<FilterType>) => {
         setArrayFilterType(event.target.value as FilterType);
     }
-    const addFilter = () => {
+    const onArrayFilterNoteChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setArrayFilterNote(event.target.value);
+    }
+    const addFilter = useCallback(() => {
         const added = addArrayFilter([{
             filterType: arrayFilterType,
             id: nanoid(),
+            filterNote: arrayFilterNote,
             filters: [...props.filterInputListRef.current]
         }]);
         if (added) {
             props.setAfInputRow([]);
         }
-    }
+    }, [arrayFilterType, arrayFilterNote])
 
     React.useEffect(() => {
         const rows = props.afInputRow;
@@ -100,21 +103,16 @@ export default function FilterInputFormList(
                     <Button onClick={addFilterInputForm}>
                         {t('common.add_filter_element')}
                     </Button>
+                    <CustomTextField
+                        label={t('필터 설명을 추가하세요')}
+                        onChange={onArrayFilterNoteChanged}
+                    />
                     <Stack direction='row' gap={1}>
-                        <FormControl sx={{ minWidth: 120 }}>
-                            <InputLabel id="arrayFilterType">{t('common.category')}</InputLabel>
-                            <Select
-                                labelId="arrayFilterType"
-                                label={t('common.category')}
-                                size="small"
-                                value={arrayFilterType}
-                                onChange={onArrayFilterTypeChanged}
-                            >
-                                <MenuItem value='include'>{t('filter.category.include')}</MenuItem>
-                                <MenuItem value='exclude'>{t('filter.category.exclude')}</MenuItem>
-                                <MenuItem value='sleep'>{t('filter.category.sleep')}</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <ArrayFilterTypeSelector 
+                            labelId="arrayFilterType"
+                            value={arrayFilterType} 
+                            onChange={onArrayFilterTypeChanged}
+                        />
                         <Button
                             disabled={props.afInputRow.length === 0}
                             onClick={addFilter}
@@ -153,7 +151,7 @@ function FilterInputForm(props: {
         props.afInputListRef.current = newInputRef;
     }
 
-    const selectorChanged = (event: SelectChangeEvent<ArrayFilterCategory | FilterType>, selectorType: 'category' | 'type') => {
+    const selectorChanged = (event: SelectChangeEvent<ArrayFilterCategory | FilterType>, selectorType: ArrayFilterSelectorType) => {
         const newValue = event.target.value;
 
         props.setInputList(list => {
@@ -205,19 +203,11 @@ function FilterInputForm(props: {
                     </>
                 ) : (
                     <>
-                        <FormControl sx={{ minWidth: 120 }} size="small">
-                            <InputLabel id="filter-category-label">{t('common.category')}</InputLabel>
-                            <Select
-                                labelId="filter-category-label"
-                                className="filter-category"
-                                label={t('common.category')}
-                                value={props.value.category}
-                                onChange={(e) => selectorChanged(e, 'category')}
-                            >
-                                <MenuItem disabled={props.nameFilterAvail} value='name'>{t('common.nickname')}</MenuItem>
-                                <MenuItem value='keyword'>{t('common.keyword')}</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <ArrayFilterCategorySelector 
+                            value={props.value.category}
+                            onChange={(e) => selectorChanged(e, 'category')}
+                            nameFilterAvail={props.nameFilterAvail}
+                        />
 
                         <CustomTextField
                             label={t('common.value')}
@@ -228,20 +218,12 @@ function FilterInputForm(props: {
                 )
             }
 
-            <FormControl sx={{ minWidth: 120 }} size="small">
-                <InputLabel id="filter-type-label">{t('common.category')}</InputLabel>
-                <Select
-                    labelId="filter-type-label"
-                    className="filter-type"
-                    label={t('common.category')}
-                    value={props.value.type}
-                    onChange={(e) => selectorChanged(e, 'type')}
-                >
-                    <MenuItem value='include'>{t('filter.category.include')}</MenuItem>
-                    <MenuItem value='exclude'>{t('filter.category.exclude')}</MenuItem>
-                    <MenuItem value='sleep'>{t('filter.category.sleep')}</MenuItem>
-                </Select>
-            </FormControl>
+            <ArrayFilterTypeSelector
+                labelId="filter-type-label"
+                value={props.value.type}
+                onChange={(e) => selectorChanged(e, 'type')}
+            />
+
             <Button onClick={(e) => removeList(e, props.value.id)}>{t('common.remove')}</Button>
         </Stack>
     )
