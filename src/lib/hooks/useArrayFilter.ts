@@ -27,7 +27,7 @@ export default function useArrayFilter(env: ENV, extStorageReadOnly: boolean = t
     const [ arrayFilter, setArrayFilter ] = React.useState<ArrayFilterListInterface[]>(localArrayFilter);
     const arrayFilterRef = React.useRef<ArrayFilterListInterface[]>([]);
     const isFilterInitialized = useRef(false);
-    const { addAlert } = useAlertContext();
+    const AlertContext = useAlertContext();
     const { t } = useTranslation();
 
     React.useEffect(() => {
@@ -57,20 +57,20 @@ export default function useArrayFilter(env: ENV, extStorageReadOnly: boolean = t
             const empty = newFilter.filters.some(row => row.value === '');
 
             if(empty) {
-                addAlert({
+                AlertContext !== null ? AlertContext.addAlert({
                     message: t('alert.no_value_filter'),
                     serverity: 'warning'
-                });
+                }) : '';
                 return false;
             }
     
             setArrayFilter(afLists => {
                 for (let af of afLists) {
                     if(arrayFiltersEqual(af.filters, newFilter.filters)){
-                        addAlert({
+                        AlertContext !== null ? AlertContext.addAlert({
                             message: t('alert.filter_already_exist'),
                             serverity: 'warning'
-                        });
+                        }) : '';
                         return afLists;
                     }
                 }

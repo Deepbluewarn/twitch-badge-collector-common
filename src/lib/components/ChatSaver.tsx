@@ -36,7 +36,7 @@ import { ChatContainer } from "./chatroom/chat-room-container";
 import SocialFooter from "./SocialFooter";
 
 export default function ChatSaver(props: { env: ENV }) {
-  const { addAlert } = useAlertContext();
+  const AlertContext = useAlertContext();
   const { t } = useTranslation();
   const { globalSetting, dispatchGlobalSetting } = useGlobalSettingContext();
   const [bgColor, setBgColor] = useState(useTheme<CustomTheme>().colors.remoteBgColor);
@@ -65,7 +65,7 @@ export default function ChatSaver(props: { env: ENV }) {
     if (selected) {
       handleSaveDialogOpen();
     } else {
-      addAlert({ serverity: "warning", message: t("alert.no_selected_chat") });
+      AlertContext !== null ? AlertContext.addAlert({ serverity: "warning", message: t("alert.no_selected_chat") }) : '';
     }
   };
 

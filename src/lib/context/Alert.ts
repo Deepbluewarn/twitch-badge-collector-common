@@ -11,7 +11,7 @@ export function useAlertContext() {
   const context = useContext(AlertContext);
 
   if (typeof context === 'undefined') {
-    throw new Error("AlertContext must be within AlertProvider");
+    return null;
   }
 
   return context;
