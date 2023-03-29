@@ -30,7 +30,7 @@ export default function useAuth() {
 
     const {data: loginUser, error: userError} = useQuery(
         ['loginUser'],
-        () => twitchAPI !== null ? twitchAPI.fetchUser() : null,
+        () => twitchAPI.fetchUser(),
         {
             enabled: typeof Token !== 'undefined' && Token.status
         }

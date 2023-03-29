@@ -14,7 +14,7 @@ const AlertContainerStyle = styled(Stack)({
 });
 
 export default function AlertContainer() {
-    const { alerts, setAlerts } = useAlertContext();
+    const { alerts } = useAlertContext();
 
     const alert = alerts.map(a => {
         return (

@@ -7,7 +7,7 @@ export function useTwitchAPIContext() {
   const context = useContext(TwitchAPIContext);
 
   if (typeof context === 'undefined') {
-    return null;
+    throw new Error("TwitchAPIContext must be within TwitchAPIProvider");
   }
 
   return context;
