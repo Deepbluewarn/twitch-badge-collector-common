@@ -52,6 +52,7 @@
         "filter_import": "Import Filter",
         "announcement": "Announcement",
         "category": "Category",
+        "type": "Type",
         "filter_type": "Filter Type",
         "chat": "Chat",
         "player": "Player",

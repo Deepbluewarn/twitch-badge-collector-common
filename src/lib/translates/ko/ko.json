@@ -52,6 +52,7 @@
         "filter_import": "필터 가져오기",
         "announcement": "공지",
         "category": "카테고리",
+        "type": "타입",
         "filter_type": "필터 카테고리",
         "chat": "채팅",
         "player": "플레이어",
