@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -17,6 +18,7 @@ import {
 import { useArrayFilterContext } from '../../context/ArrayFilter';
 import { nanoid } from 'nanoid';
 import { ArrayFilterCategorySelector, ArrayFilterSelectorType, ArrayFilterTypeSelector } from './ArrayFilterComponents';
+import Divider from '@mui/material/Divider';
 
 export default function FilterInputFormList(
     props: {
@@ -25,6 +27,7 @@ export default function FilterInputFormList(
         filterInputListRef: React.MutableRefObject<ArrayFilterInterface[]>
     }
 ) {
+    const matches = useMediaQuery('(min-width:600px)');
     const { addArrayFilter } = useArrayFilterContext();
     const [arrayFilterType, setArrayFilterType] = React.useState<FilterType>('include');
     const [arrayFilterNote, setArrayFilterNote] = useState('');
@@ -98,17 +101,23 @@ export default function FilterInputFormList(
                     )
                 }
             </CardContent>
-            <CardActions>
-                <Stack direction='row' justifyContent='space-between' sx={{width: '100%'}}>
+            <Divider/>
+            <CardActions sx={{padding: '16px'}}>
+                <Stack 
+                    direction='row' 
+                    justifyContent='space-between' 
+                    sx={{width: '100%'}}
+                >
                     <Button onClick={addFilterInputForm}>
                         {t('common.add_filter_element')}
                     </Button>
-                    <CustomTextField
-                        label={t('필터 설명을 추가하세요')}
-                        onChange={onArrayFilterNoteChanged}
-                    />
-                    <Stack direction='row' gap={1}>
-                        <ArrayFilterTypeSelector 
+                    <Stack direction={matches ? 'row' : 'column'} gap={1} flex='0.7'>
+                        <CustomTextField
+                            label={t('필터 설명을 추가하세요')}
+                            onChange={onArrayFilterNoteChanged}
+                            
+                        />
+                        <ArrayFilterTypeSelector
                             labelId="arrayFilterType"
                             value={arrayFilterType} 
                             onChange={onArrayFilterTypeChanged}
@@ -234,6 +243,6 @@ function CustomTextField(props: TextFieldProps) {
         id="outlined-basic"
         variant="outlined"
         size="small"
-        fullWidth
+        sx={{flex: '1'}}
     />
 }
