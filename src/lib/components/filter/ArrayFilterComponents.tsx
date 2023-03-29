@@ -18,10 +18,10 @@ export function ArrayFilterTypeSelector(props: SelectProps<FilterType>) {
 
     return (
         <FormControl sx={{ minWidth: 120 }}>
-            <InputLabel id="arrayFilterType">{t('common.category')}</InputLabel>
+            <InputLabel id="arrayFilterType">{t('common.condition')}</InputLabel>
             <Select
                 labelId="arrayFilterType"
-                label={t('common.category')}
+                label={t('common.condition')}
                 size="small"
                 {...props}
             >
