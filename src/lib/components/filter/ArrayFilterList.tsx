@@ -85,10 +85,12 @@ export function ArrayFilterList() {
                 if(!params.value) return null;
 
                 return (
-                    <Chip
-                        label={params.value}
-                        color='secondary'
-                    />
+                    <Tooltip key={params.value} title={params.value}>
+                        <Chip
+                            label={params.value}
+                            color='secondary'
+                        />
+                    </Tooltip >
                 )
             }
         },
