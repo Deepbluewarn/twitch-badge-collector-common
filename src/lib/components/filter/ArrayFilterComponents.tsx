@@ -36,6 +36,8 @@ export function ArrayFilterTypeSelector(props: SelectProps<FilterType>) {
 export function ArrayFilterCategorySelector(props: ArrayFilterTypeSelector) {
     const { t } = useTranslation();
 
+    const {nameFilterAvail, ...rest} = props;
+
     return (
         <FormControl sx={{ minWidth: 120 }} size="small">
             <InputLabel id="filter-category-label">{t('common.category')}</InputLabel>
@@ -43,7 +45,7 @@ export function ArrayFilterCategorySelector(props: ArrayFilterTypeSelector) {
                 labelId="filter-category-label"
                 className="filter-category"
                 label={t('common.category')}
-                {...props}
+                {...rest}
             >
                 <MenuItem disabled={props.nameFilterAvail} value='name'>{t('common.nickname')}</MenuItem>
                 <MenuItem value='keyword'>{t('common.keyword')}</MenuItem>
