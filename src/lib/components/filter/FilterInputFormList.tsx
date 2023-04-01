@@ -59,6 +59,7 @@ export default function FilterInputFormList(
         }]);
         if (added) {
             props.setAfInputRow([]);
+            setArrayFilterNote('');
         }
     }, [arrayFilterType, arrayFilterNote])
 
@@ -113,6 +114,7 @@ export default function FilterInputFormList(
                     </Button>
                     <Stack direction={matches ? 'row' : 'column'} gap={1} flex='0.7'>
                         <CustomTextField
+                            value={arrayFilterNote}
                             label={t('필터 설명을 추가하세요')}
                             onChange={onArrayFilterNoteChanged}
                             
