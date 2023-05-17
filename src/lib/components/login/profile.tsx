@@ -1,20 +1,37 @@
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
-import { Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import { BadgeInfo } from "tmi.js";
 import { getSubscriberBadgeTier } from "../../utils/utils";
 import { GetUsersFollows } from "../../interface/twitchAPI";
 import { useTranslation } from "react-i18next";
 
+export function UserTitle(props: { displayName: string | undefined, loginName: string | undefined }) {
+    return (
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+            <Link
+                href={`https://www.twitch.tv/${props.loginName}`}
+                color="inherit"
+                underline="none"
+                target="_blank"
+            >
+                {`${props.displayName} (${props.loginName})`}
+            </Link>
+        </Typography>
+    )
+}
 export function Profile(props: {
     profileImgUrl: string | undefined,
     displayName: string | undefined,
-    loginName: string | undefined
+    loginName: string | undefined,
+    children?: React.ReactNode
 }) {
     return (
         <Stack direction="row" alignItems='center' spacing={1}>
             <Avatar src={props.profileImgUrl}></Avatar>
-            <span>{`${props.displayName} (${props.loginName})`}</span>
+            <Stack direction='column'>
+                {props.children}
+            </Stack>
         </Stack>
     )
 }
@@ -49,17 +66,14 @@ export function UserDetail(props: {
     }
 
     return (
-        <Stack direction="row" spacing={1}>
-            <Avatar src={props.profileImgUrl}></Avatar>
-            <Stack direction='column'>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{`${props.displayName} (${props.loginName})`}</Typography>
-                {userFollows && typeof userFollows !== 'undefined' && userFollows.data.length > 0 ? (
-                    <Typography variant="body2">{`${t('common.followSince', {date: getFollowedDate(userFollows)})}`}</Typography>
-                ) : null}
-                {badgeInfo && typeof badgeInfo !== 'undefined' && tier && tier !== '' ? (
-                    <Typography variant="body2">{`${t('common.tier')} ${tier}, ${t('common.subscribeSince', {month: badgeInfo.subscriber})}`}</Typography>
-                ) : null}
-            </Stack>
-        </Stack>
+        <Profile profileImgUrl={props.profileImgUrl} displayName={props.displayName} loginName={props.loginName}>
+            <UserTitle displayName={props.displayName} loginName={props.loginName} />
+            {userFollows && typeof userFollows !== 'undefined' && userFollows.data.length > 0 ? (
+                <Typography variant="body2">{`${t('common.followSince', { date: getFollowedDate(userFollows) })}`}</Typography>
+            ) : null}
+            {badgeInfo && typeof badgeInfo !== 'undefined' && tier && tier !== '' ? (
+                <Typography variant="body2">{`${t('common.tier')} ${tier}, ${t('common.subscribeSince', { month: badgeInfo.subscriber })}`}</Typography>
+            ) : null}
+        </Profile>
     )
 }
