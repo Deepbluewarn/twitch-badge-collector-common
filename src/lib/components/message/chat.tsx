@@ -12,7 +12,7 @@ import { MessageInterface } from "../../interface/chat";
 import { useReadableColor } from "../../hooks/useReadableColor";
 import { useGlobalSettingContext } from "../../context/GlobalSetting";
 import { useChannelInfoContext } from "../../context/ChannelInfoContext";
-import { ChannelChatBadgesCategory, ChannelChatBadgesCategoryArr, UDVersion, UDVersionObject } from "../../interface/twitchAPI";
+import { ChannelChatBadgesCategory, ChannelChatBadgesCategoryArr } from "../../interface/twitchAPI";
 import { useQuery } from "@tanstack/react-query";
 import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
 import { getSubscriberBadgeTier } from "../../utils/utils";
@@ -135,8 +135,6 @@ const Badges = memo((props: {badgesRaw: string | undefined, badgeInfo: BadgeInfo
 
     const globalBadges = channelInfoObject.globalBadges;
     const channelBadges = channelInfoObject.channelBadges;
-    const udGlobalBadges = channelInfoObject.udGlobalBadges.badge_sets;
-    const udChannelBadges = channelInfoObject.udChannelBadges.badge_sets;
 
     const badgesRaw = props.badgesRaw;
     const badgeInfo = props.badgeInfo;
@@ -146,51 +144,23 @@ const Badges = memo((props: {badgesRaw: string | undefined, badgeInfo: BadgeInfo
     if (!badgesRaw || typeof badgesRaw === 'undefined' || badgesRaw === '') return null;
     let badgesArr = badgesRaw.split(',');
 
-    if (!channelBadges || !globalBadges || !udGlobalBadges || !udChannelBadges) {
+    if (!channelBadges || !globalBadges) {
         return <span></span>
-    }
-
-    const badgeTooltipTitle = (udVersion: UDVersionObject | undefined, badge: string, badgeId: string) => {
-        if(typeof udVersion === 'undefined' || !udVersion) return;
-
-        let title = '';
-
-        if(badgeId === 'subscriber'){
-            title = `${t('common.tier')} ${getSubscriberBadgeTier(badge)}, ${udVersion.title}${badgeInfo ? ` (${badgeInfo.subscriber} ${t('common.months')})` : ''}`;
-        }else{
-            title = udVersion.title;
-        }
-
-        return title;
     }
 
     const badges = badgesArr.reduce(function (result: JSX.Element[], badge) {
         const badgeSplit = badge.split('/');
-        const id: ChannelChatBadgesCategory = badgeSplit[0];
-        const version = (badgeSplit[1] as unknown) as number;
         const bg = channelBadges.get(badge) || globalBadges.get(badge);
-        const _udChannelBadges = ChannelChatBadgesCategoryArr.includes(id) ? udChannelBadges[id] : undefined;
-        const _udGlobalBadges = udGlobalBadges[id];
-        const udbg =
-            (typeof _udChannelBadges !== 'undefined' ? _udChannelBadges.versions[version] : undefined) ||
-            (typeof _udGlobalBadges !== 'undefined' ? _udGlobalBadges.versions[version] : undefined)
 
         if (typeof bg !== 'undefined') {
             result.push(
-                <Tooltip
-                    placement='top'
-                    arrow
-                    key={badge}
-                    title={badgeTooltipTitle(udbg, badge, id)}
-                >
-                    <img
-                        className="chat-badge"
-                        src={bg.image_url_1x}
-                        srcSet={`${bg.image_url_1x} 1x, ${bg.image_url_2x} 2x, ${bg.image_url_4x} 4x`}
-                        key={bg.image_url_1x}
-                        alt='Chat Badge'
-                    />
-                </Tooltip>
+                <img
+                    className="chat-badge"
+                    src={bg.image_url_1x}
+                    srcSet={`${bg.image_url_1x} 1x, ${bg.image_url_2x} 2x, ${bg.image_url_4x} 4x`}
+                    key={bg.image_url_1x}
+                    alt='Chat Badge'
+                />
             )
         }
         return result;

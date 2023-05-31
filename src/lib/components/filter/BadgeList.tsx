@@ -20,9 +20,9 @@ import { CustomDataGrid } from "../datagrid/customDataGrid";
 import { BadgeInterface, BadgeUrls } from "../../interface/chat";
 import { ArrayFilterInterface, FilterType } from "../../interface/filter";
 import { BadgeChannelType } from "../../interface/channel";
-import { UDGlobalChatBadges } from "../../interface/twitchAPI";
 import { BadgeChannelNameContext, BadgeListChannelContext, useBadgeChannelNameContext, useBadgeListChannelContext } from "../../context/BadgeChannel";
 import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
+import { Version } from "../../interface/twitchAPI";
 
 function CustomToolbar(props: {
     setAfInputRow: React.Dispatch<React.SetStateAction<ArrayFilterInterface[]>>,
@@ -113,27 +113,27 @@ export default function BadgeList(props: {
         }
     );
 
-    const {data: UDGlobalBadges, isSuccess: isGBSuccess, fetchStatus: GBFetchStatus} = useQuery(
-        ['UDGlobalBadges', badgeListChannel],
-        () => twitchAPI.fetchUDGlobalChatBadges(),
+    const {data: GlobalBadges, isSuccess: isGBSuccess, fetchStatus: GBFetchStatus} = useQuery(
+        ['GlobalBadges', badgeListChannel],
+        () => twitchAPI.fetchGlobalChatBadges(),
         {
             enabled: badgeListChannel === 'global'
         }
-    );
+    )
 
-    const {data: UDChannelChatBadges, isSuccess: isCBSuccess, fetchStatus: CBFetchStatus} = useQuery(
-        ['UDChannelChatBadges', badgeListChannel, userId],
-        () => twitchAPI.fetchUDChannelChatBadges(userId),
+    const {data: ChannelChatBadges, isSuccess: isCBSuccess, fetchStatus: CBFetchStatus} = useQuery(
+        ['ChannelChatBadges', badgeListChannel, userId],
+        () => twitchAPI.fetchChannelChatBadges(userId),
         {
             enabled: badgeListChannel === 'channel' && userId !== ''
         }
-    );
+    )
 
     React.useEffect(() => {
-        if(!UDGlobalBadges) return;
-
-        const badgesArray = badgesToArray(UDGlobalBadges);
-
+        if(!GlobalBadges) return;
+    
+        const badgesArray = badgesToArray(GlobalBadges);
+    
         const badgesRow: BadgeInterface[] = badgesArray.map(badge => {
             return {
                 id: `${badge.image_url_1x}-${badge.description}-${badge.key}`,
@@ -150,7 +150,7 @@ export default function BadgeList(props: {
         });
         setLoading(false);
         setBadgesRows(badgesRow);
-    }, [UDGlobalBadges]);
+    }, [GlobalBadges]);    
 
     React.useEffect(() => {
         if(!User || User.data.length === 0) return;
@@ -159,9 +159,9 @@ export default function BadgeList(props: {
     }, [User]);
 
     React.useEffect(() => {
-        if(!UDChannelChatBadges || (!User || User.data.length === 0)) return;
+        if(!ChannelChatBadges || (!User || User.data.length === 0)) return;
 
-        const badgesArray = badgesToArray(UDChannelChatBadges);
+        const badgesArray = badgesToArray(ChannelChatBadges);
         const channelName = User.data[0].display_name;
 
         const badgesRow: BadgeInterface[] = badgesArray.map(badge => {
@@ -179,7 +179,7 @@ export default function BadgeList(props: {
             } as BadgeInterface;
         });
         setBadgesRows(badgesRow);
-    }, [UDChannelChatBadges, User]);
+    }, [ChannelChatBadges, User]);
 
     React.useEffect(() => {
         if(GBFetchStatus === 'fetching' || CBFetchStatus === 'fetching') {
@@ -211,33 +211,22 @@ export default function BadgeList(props: {
         />
     )
 }
-
-function badgesToArray(badges: UDGlobalChatBadges) {
-    const badgeSets = badges.badge_sets;
+function badgesToArray(badges: Map<string, Version>) {
     const res = [];
 
-    for (let [type, versions] of Object.entries(badgeSets)) {
-        for (let [key, versionObj] of Object.entries(versions)) {
-            for (let [key, value] of Object.entries(versionObj)) {
-                value.type = type;
-                value.key = key;
-
-                if (type === 'subscriber') {
-                    let tier: number = 0;
-                    if (key.length <= 2) {
-                        tier = 1;
-                    } else if (key.length === 4 && key[0] === '2') {
-                        tier = 2;
-                    } else if (key.length === 4 && key[0] === '3') {
-                        tier = 3;
-                    }
-                    value.tier = tier;
-                }
-
-                res.push(value)
-            }
+    for (let [key, version] of badges) {
+        let badgeInfo = {
+            ...version,
+            set_id: key, // The key of the map is used as the set_id
+            type: "", // type 정보가 없으므로 빈 문자열로 설정
+            key: "", // key 정보가 없으므로 빈 문자열로 설정
+            click_action: "", // click_action 정보가 없으므로 빈 문자열로 설정
+            last_updated: null, // last_updated 정보가 없으므로 null로 설정
         }
+
+        res.push(badgeInfo);
     }
+
     return res;
 }
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { ChannelNameType } from "../interface/channel";
-import { ChatBadges, EmoteSet, GetClips, GetFollowedStreams, GetUser, GetUsersFollows, GetVideos, Tiers, UDChannelChatBadges, UDGlobalChatBadges, Version } from "../interface/twitchAPI";
+import { ChatBadges, EmoteSet, GetClips, GetFollowedStreams, GetUser, GetUsersFollows, GetVideos, Tiers, Version } from "../interface/twitchAPI";
 
 export default function useTwitchAPI(dev: boolean) {
 
@@ -61,26 +61,6 @@ export default function useTwitchAPI(dev: boolean) {
         const {data} = await instance.get(`/api/clips?${params}`);
 
         return data as GetClips;
-    }, []);
-
-    const fetchUDChannelChatBadges = React.useCallback(async (broadcaster_id: string) => {
-        const params = new URLSearchParams();
-        const url = `/udapi/badges/channels/${broadcaster_id}/display?${params}`;
-
-
-        const {data} = await instance.get(url);
-
-        return data as UDChannelChatBadges;
-    }, []);
-
-    const fetchUDGlobalChatBadges = React.useCallback(async () => {
-
-        const params = new URLSearchParams();
-        const url = `/udapi/badges/global/display?${params}`;
-
-        const {data} = await instance.get(url);
-
-        return data as UDGlobalChatBadges;
     }, []);
 
     const fetchEmoteSets = React.useCallback(async (emote_sets_id: string[]) => {
@@ -144,8 +124,6 @@ export default function useTwitchAPI(dev: boolean) {
         fetchGlobalChatBadges, 
         fetchVideos, 
         fetchClips,
-        fetchUDGlobalChatBadges,
-        fetchUDChannelChatBadges,
         fetchEmoteSets,
         fetchCheermotes,
         fetchUsersFollows
@@ -159,8 +137,6 @@ export interface TwitchAPIHooks {
     fetchGlobalChatBadges: () => Promise<Map<string, Version>>,
     fetchVideos: (id: string) => Promise<GetVideos>,
     fetchClips: (clipId: string) => Promise<GetClips>,
-    fetchUDGlobalChatBadges: () => Promise<UDGlobalChatBadges>,
-    fetchUDChannelChatBadges: (broadcaster_id: string) => Promise<UDChannelChatBadges>,
     fetchEmoteSets: (emote_sets_id: string[]) => Promise<Map<string, EmoteSet>>,
     fetchCheermotes: (broadcaster_id: string) => Promise<Map<string, Tiers[]>>,
     fetchUsersFollows: (from_id: string, to_id: string) => Promise<GetUsersFollows>

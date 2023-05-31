@@ -1,5 +1,4 @@
 import { ChannelBadges, ChatInfoObjects, ChatInfoReducerAction, Cheermotes, Emotesets, GlobalBadges } from "../interface/chatInfoObjects";
-import { UDChannelChatBadges, UDGlobalChatBadges } from "../interface/twitchAPI";
 
 export function chatInfoReducer(state: ChatInfoObjects, action: ChatInfoReducerAction): ChatInfoObjects{
     const copyState = { ...state };
@@ -10,12 +9,6 @@ export function chatInfoReducer(state: ChatInfoObjects, action: ChatInfoReducerA
             return copyState;
         case "channelBadges":
             copyState.channelBadges = action.value as ChannelBadges;
-            return copyState;
-        case "udGlobalBadges":
-            copyState.udGlobalBadges = action.value as UDGlobalChatBadges;
-            return copyState;
-        case "udChannelBadges":
-            copyState.udChannelBadges = action.value as UDChannelChatBadges;
             return copyState;
         case "emotesets":
             copyState.emotesets = action.value as Emotesets;

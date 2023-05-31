@@ -5,9 +5,7 @@ import { useAlertContext } from "../context";
 import { useTwitchAPIContext } from "../context/TwitchAPIContext";
 import { ChannelInfoInterface, ChannelInterface } from "../interface/channel";
 import { 
-    Version, 
-    UDGlobalChatBadges as UDGlobalChatBadgesInterface,
-    UDChannelChatBadges as UDChannelChatBadgesInterface
+    Version,
 } from "../interface/twitchAPI";
 import { chatInfoReducer } from "../reducer/chatInfo";
 
@@ -17,8 +15,6 @@ export default function useChannelInfo() {
     const [ channelInfoObject, dispatchChannelInfo ] = React.useReducer(chatInfoReducer, {
         globalBadges: new Map<string, Version>(),
         channelBadges: new Map<string, Version>(),
-        udGlobalBadges: {} as UDGlobalChatBadgesInterface,
-        udChannelBadges: {} as UDChannelChatBadgesInterface,
         emotesets: new Map<string, any>(),
         cheermotes: new Map<string, any>(),
     });
@@ -36,19 +32,6 @@ export default function useChannelInfo() {
     const {data: ChannelChatBadges, isSuccess: isChannelChatBadgesSuccess} = useQuery(
         ['ChannelChatBadges', userId],
         () => twitchAPI.fetchChannelChatBadges(userId),
-        {
-            enabled: userId !== ''
-        }
-    )
-
-    const {data: UDGlobalChatBadges, isSuccess: isUDGlobalBadgesSuccess} = useQuery(
-        ['UDGlobalBadges'],
-        () => twitchAPI.fetchUDGlobalChatBadges(),
-    )
-
-    const {data: UDChannelChatBadges, isSuccess: isUDChannelChatBadgesSuccess} = useQuery(
-        ['UDChannelChatBadges', userId],
-        () => twitchAPI.fetchUDChannelChatBadges(userId),
         {
             enabled: userId !== ''
         }
@@ -83,18 +66,6 @@ export default function useChannelInfo() {
     }, [ChannelChatBadges]);
 
     React.useEffect(() => {
-        if(!UDGlobalChatBadges) return;
-
-        dispatchChannelInfo({type: 'udGlobalBadges', value: UDGlobalChatBadges});
-    }, [UDGlobalChatBadges]);
-    
-    React.useEffect(() => {
-        if(!UDChannelChatBadges) return;
-
-        dispatchChannelInfo({type: 'udChannelBadges', value: UDChannelChatBadges});
-    }, [UDChannelChatBadges]);
-
-    React.useEffect(() => {
         if(!Cheermotes) return;
 
         dispatchChannelInfo({type: 'cheermotes', value: Cheermotes});
@@ -104,16 +75,12 @@ export default function useChannelInfo() {
         setIsChannelInfoObjSuccess(
             isGlobalBadgesSuccess &&
             isChannelChatBadgesSuccess &&
-            isUDGlobalBadgesSuccess &&
-            isUDChannelChatBadgesSuccess &&
             isCheermotesSuccess
         );
     }, [
         isGlobalBadgesSuccess, 
         isChannelChatBadgesSuccess, 
         isCheermotesSuccess,
-        isUDGlobalBadgesSuccess,
-        isUDChannelChatBadgesSuccess
     ]
     );
 
