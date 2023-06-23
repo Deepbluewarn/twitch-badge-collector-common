@@ -33,6 +33,24 @@ export function ArrayFilterTypeSelector(props: SelectProps<FilterType>) {
     )
 }
 
+export function FilterCategorySelector(props: SelectProps<ArrayFilterCategory>) {
+    const { t } = useTranslation();
+
+    return (
+        <FormControl sx={{ minWidth: 120 }} size="small">
+            <InputLabel id="filter-category-label">{t('common.category')}</InputLabel>
+            <Select
+                labelId="filter-category-label"
+                className="filter-category"
+                label={t('common.category')}
+                {...props}
+            >
+                <MenuItem value='name'>{t('common.nickname')}</MenuItem>
+                <MenuItem value='keyword'>{t('common.keyword')}</MenuItem>
+            </Select>
+        </FormControl>
+    )
+}
 export function ArrayFilterCategorySelector(props: ArrayFilterTypeSelector) {
     const { t } = useTranslation();
 

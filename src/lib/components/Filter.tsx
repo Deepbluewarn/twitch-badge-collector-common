@@ -1,24 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactGA from "react-ga4";
 import { BroadcastChannel } from 'broadcast-channel';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
-import Alert from '@mui/material/Alert';
 import BadgeList from './filter/BadgeList';
 import { ArrayFilterInterface, ArrayFilterMessageInterface } from '../interface/filter';
 import useChatInfoObjects from '../hooks/useChannelInfo';
 import { ChannelInfoContext } from '../context/ChannelInfoContext';
 import { useArrayFilterContext } from '../context/ArrayFilter';
 import FilterInputFormList from './filter/FilterInputFormList';
+import FilterInputForm from './filter/FilterInputForm';
 import SocialFooter from './SocialFooter';
 import { ArrayFilterList } from './filter/ArrayFilterList';
-
+import { useGlobalSettingContext } from '../context/GlobalSetting';
+import { getDefaultArrayFilter } from '../utils/utils';
 
 export default function Filter() {
-    const { arrayFilter, setArrayFilter } = useArrayFilterContext();
+    const { globalSetting } = useGlobalSettingContext();
+    const [advancedFilter, setAdvancedFilter] = React.useState(globalSetting.advancedFilter === 'on');
+    const { arrayFilter } = useArrayFilterContext();
     const { channelInfoObject, dispatchChannelInfo, channel, setChannel, User } = useChatInfoObjects();
+    const [filterInput, setFilterInput] = React.useState<ArrayFilterInterface>(getDefaultArrayFilter());
     const [filterInputList, setFilterInputList] = React.useState<ArrayFilterInterface[]>([]);
     const filterInputListRef = React.useRef<ArrayFilterInterface[]>([]);
     const filterBroadcastChannel = React.useRef<BroadcastChannel<ArrayFilterMessageInterface>>(new BroadcastChannel('ArrayFilter'));
@@ -34,10 +38,6 @@ export default function Filter() {
     }, []);
 
     React.useEffect(() => {
-        filterInputListRef.current = filterInputList;
-    }, [filterInputList]);
-
-    React.useEffect(() => {
         const msg = {
             from: 'filter',
             filter: arrayFilter,
@@ -47,9 +47,13 @@ export default function Filter() {
         filterBroadcastChannel.current.postMessage(msg);
     }, [arrayFilter]);
 
+    useEffect(() => {
+        setAdvancedFilter(f => globalSetting.advancedFilter === 'on');
+    }, [globalSetting]);
+
     return (
         <ChannelInfoContext.Provider value={{ channelInfoObject, dispatchChannelInfo, channel, setChannel, User }}>
-            <Stack spacing={2} sx={{minHeight: '0'}}>
+            <Stack spacing={2} sx={{ minHeight: '0' }}>
                 <Card
                     sx={{
                         padding: '16px',
@@ -76,21 +80,37 @@ export default function Filter() {
                         <Typography variant="h6">
                             {t('setting.filter.filter_add')}
                         </Typography>
+                        {
+                            advancedFilter ?
+                                (
+                                    <Typography variant='subtitle2'>
+                                        {t('setting.filter.filter_add_subtitle')}
+                                    </Typography>
+                                ) : null
+                        }
+                        {
+                            advancedFilter ? (
+                                <FilterInputFormList
+                                    afInputRow={filterInputList}
+                                    setAfInputRow={setFilterInputList}
+                                    filterInputListRef={filterInputListRef}
+                                />
+                            ) : (
+                                <FilterInputForm
+                                    filterInput={filterInput}
+                                    setFilterInput={setFilterInput}
+                                />
+                            )
+                        }
 
-                        <Typography variant='subtitle2'>
-                            {t('setting.filter.filter_add_subtitle')}
-                        </Typography>
-
-                        <FilterInputFormList
-                            afInputRow={filterInputList}
-                            setAfInputRow={setFilterInputList}
-                            filterInputListRef={filterInputListRef}
-                        />
                         <Typography variant="h6">
                             {t('setting.filter.select_badges')}
                         </Typography>
 
-                        <BadgeList setAfInputRow={setFilterInputList} />
+                        <BadgeList
+                            setAfInputRow={setFilterInputList}
+                            setFilterInput={setFilterInput}
+                        />
                     </Stack>
                 </Card>
                 <SocialFooter />

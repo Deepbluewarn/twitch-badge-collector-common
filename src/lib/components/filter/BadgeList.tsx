@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { nanoid } from 'nanoid';
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
@@ -9,7 +9,6 @@ import {
     GridToolbarContainer,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
-import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -23,6 +22,8 @@ import { BadgeChannelType } from "../../interface/channel";
 import { BadgeChannelNameContext, BadgeListChannelContext, useBadgeChannelNameContext, useBadgeListChannelContext } from "../../context/BadgeChannel";
 import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
 import { Version } from "../../interface/twitchAPI";
+import { useGlobalSettingContext } from "../../context/GlobalSetting";
+import RelaxedChip from "../chip/RelaxedChip";
 
 function CustomToolbar(props: {
     setAfInputRow: React.Dispatch<React.SetStateAction<ArrayFilterInterface[]>>,
@@ -64,7 +65,10 @@ function CustomToolbar(props: {
 
 export default function BadgeList(props: {
     setAfInputRow: React.Dispatch<React.SetStateAction<ArrayFilterInterface[]>>
+    setFilterInput: React.Dispatch<React.SetStateAction<ArrayFilterInterface>>
 }) {
+    const { globalSetting } = useGlobalSettingContext();
+    const [advancedFilter, setAdvancedFilter] = useState(globalSetting.advancedFilter === 'on');
     const [badgesRow, setBadgesRows] = React.useState<BadgeInterface[]>([]);
     const [selectionModel, setSelectionModel] = React.useState<GridRowId[]>([]);
     const [showAddButton, setShowAddButton] = React.useState(false);
@@ -95,7 +99,7 @@ export default function BadgeList(props: {
                 if (!params.value) return null;
 
                 return (
-                    <Chip
+                    <RelaxedChip
                         label={t(`filter.category.${params.value}`)}
                         color={chipColor(params.value)}
                         onClick={() => onBadgeTypeChipClick(params, setBadgesRows)}
@@ -128,6 +132,23 @@ export default function BadgeList(props: {
             enabled: badgeListChannel === 'channel' && userId !== ''
         }
     )
+
+    const updateFilterInput = (id: GridRowId) => {
+        if(typeof id === 'undefined') return;
+        
+        const badge = badgesRow.find(badge => badge.id === id.toString());
+        if (!badge) return;
+
+        const badgeUUID = badgeUuidFromURL(badge.badgeImage.badge_img_url_1x);
+
+        props.setFilterInput({
+            category: 'badge',
+            id: nanoid(),
+            type: badge.filterType,
+            value: badgeUUID,
+            badgeName: `${badge.channel}: ${badge.badgeName}`
+        });
+    }
 
     React.useEffect(() => {
         if(!GlobalBadges) return;
@@ -189,6 +210,10 @@ export default function BadgeList(props: {
         }
     }, [GBFetchStatus, CBFetchStatus]);
 
+    useEffect(() => {
+        setAdvancedFilter(globalSetting.advancedFilter === 'on');
+    }, [globalSetting])
+
     return (
         <CustomDataGrid rows={badgesRow} columns={columns}
             components={{ Toolbar: CustomToolbar }}
@@ -204,10 +229,12 @@ export default function BadgeList(props: {
                 }
             }}
             onSelectionModelChange={(ids) => {
-                setShowAddButton(ids.length > 0);
+                setShowAddButton(advancedFilter && ids.length > 0);
                 setSelectionModel(ids);
+                updateFilterInput(ids[0]);
             }}
             selectionModel={selectionModel}
+            checkboxSelection={advancedFilter}
         />
     )
 }
@@ -344,7 +371,8 @@ function AddBadgeFilterButton(props: {
             }}
             sx={{
                 alignItems: 'center',
-                padding: '4px'
+                padding: '4px',
+                cursor: 'pointer',
             }}
         >
             <span className="material-icons-round">add</span>
