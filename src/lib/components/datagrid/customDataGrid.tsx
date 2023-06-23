@@ -19,7 +19,8 @@ export function CustomDataGrid(props: DataGridProps) {
     
     return (
         <Box sx={{height: '27rem'}}>
-            <DataGrid {...props} componentsProps={props.componentsProps}
+            <DataGrid 
+                componentsProps={props.componentsProps}
                 localeText={locale.components.MuiDataGrid.defaultProps.localeText}
                 sx={{ "height": '27rem' }}
                 getRowHeight={() => 'auto'}
@@ -27,6 +28,7 @@ export function CustomDataGrid(props: DataGridProps) {
                 pageSize={6}
                 rowsPerPageOptions={[6]}
                 checkboxSelection={true}
+                {...props}
             />
         </Box>
     )
