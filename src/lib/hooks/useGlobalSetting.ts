@@ -30,7 +30,8 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
         position: 'up',
         chatTime: 'on',
         player: 'on',
-        maximumNumberChats: 100
+        maximumNumberChats: 100,
+        advancedFilter: 'off'
     } as Setting;
     const [globalSettingUpdated, setGlobalSettingUpdated] = useState(false);
 
@@ -60,6 +61,7 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
                     "darkTheme",
                     "chatTime",
                     'maximumNumberChats',
+                    'advancedFilter',
                     "miniLanguage",
                     "miniFontSize",
                     "miniChatTime",
@@ -72,6 +74,7 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
                         darkTheme: res.darkTheme,
                         chatTime: res.chatTime,
                         maximumNumberChats: res.maximumNumberChats as number,
+                        advancedFilter: res.advancedFilter,
                         miniChatTime: res.miniChatTime,
                         miniLanguage: res.miniLanguage,
                         miniFontSize: res.miniFontSize,
@@ -97,6 +100,7 @@ export default function useGlobalSetting(env: ENV, extStorageReadOnly: boolean =
                 darkTheme: globalSetting.darkTheme,
                 chatTime: globalSetting.chatTime,
                 maximumNumberChats: globalSetting.maximumNumberChats,
+                advancedFilter: globalSetting.advancedFilter,
                 miniLanguage: globalSetting.miniLanguage,
                 miniFontSize: globalSetting.miniFontSize,
                 miniChatTime: globalSetting.miniChatTime,

@@ -27,6 +27,7 @@ export type SettingCategory =
     'position' | 
     'chatTime' | 
     'player' |
+    'advancedFilter' |
     'chatDisplayMethod'|
     'pointBoxAuto' |
     'maximumNumberChats' |
@@ -54,6 +55,7 @@ export interface Setting {
     chatFontSize?: FontSizeOptionsType
     language?: LanguageOptionsType
     player?: ToggleOptionsType
+    advancedFilter?: ToggleOptionsType
 
     // 확장 설정
 

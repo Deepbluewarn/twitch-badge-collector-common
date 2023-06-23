@@ -40,6 +40,8 @@ export default function Setting(props: { option: SettingListOptions }) {
             dispatchGlobalSetting({ type: 'chatTime', value });
         } else if (id === 'player-switch') {
             dispatchGlobalSetting({ type: 'player', value });
+        } else if (id === 'filter-mode-switch'){
+            dispatchGlobalSetting({ type: 'advancedFilter', value });
         }
     };
 
@@ -155,6 +157,16 @@ export default function Setting(props: { option: SettingListOptions }) {
         </ListItem>
     )
 
+    const mode = (
+        <ListItem>
+            <ListItemText primary={t('setting.filter_mode.advanced')} />
+            <Switch
+                id='filter-mode-switch'
+                checked={globalSetting.advancedFilter === 'on'}
+                onChange={handleSwitchChange}
+            />
+        </ListItem>
+    )
 
     return (
         <Box>
@@ -177,7 +189,12 @@ export default function Setting(props: { option: SettingListOptions }) {
                     {(props.option === 'ALL') ? position : null}
                     {(props.option === 'ALL' || props.option === 'WEB_DRAWER' || props.option === 'EXT_DRAWER') ? chatTime : null}
                 </List>
-
+                <Divider />
+                <List
+                    subheader={<ListSubheader disableSticky={true}>{t('common.filter')}</ListSubheader>}
+                >
+                    {mode}
+                </List>
                 {(props.option === 'ALL') ? (
                     <>
                         <Divider />

@@ -129,6 +129,9 @@
             "filter_add": "Add New Filter",
             "filter_add_subtitle": "Filters chats that satisfy all the conditions of the added filter element.",
             "select_badges": "Select Badges"
+        },
+        "filter_mode": {
+            "advanced": "Advenced Settings"
         }
     }
 }

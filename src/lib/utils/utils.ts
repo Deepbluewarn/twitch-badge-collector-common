@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { ArrayFilterInterface } from "../interface/filter";
 
 export function trim_hash(str: string) {
@@ -7,6 +8,14 @@ export function trim_hash(str: string) {
         c1 = str[0] === '#' ? str.substring(1) : str;
     }
     return c1;
+}
+export function getDefaultArrayFilter() {
+    return {
+        category: 'name',
+        id: nanoid(),
+        type: 'include',
+        value: ''
+    } as ArrayFilterInterface;
 }
 export function getSubscriberBadgeTier(badge: string | undefined) {
     if(typeof badge === 'undefined' || !badge) return;

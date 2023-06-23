@@ -1,3 +1,6 @@
+/**
+ * 필터 고급 모드를 위한 컴포넌트입니다.
+ */
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -5,7 +8,6 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import { SelectChangeEvent } from '@mui/material/Select';
-import TextField, { TextFieldProps } from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -19,6 +21,7 @@ import { useArrayFilterContext } from '../../context/ArrayFilter';
 import { nanoid } from 'nanoid';
 import { ArrayFilterCategorySelector, ArrayFilterSelectorType, ArrayFilterTypeSelector } from './ArrayFilterComponents';
 import Divider from '@mui/material/Divider';
+import CustomTextField from '../TextField/CustomTextField';
 
 export default function FilterInputFormList(
     props: {
@@ -72,21 +75,21 @@ export default function FilterInputFormList(
     }, [props.afInputRow]);
 
     return (
-        <Card variant="outlined" sx={{overflow: 'visible'}}>
-            <CardContent sx={{display: 'flex', minHeight: '22rem'}}>
+        <Card variant="outlined" sx={{ overflow: 'visible' }}>
+            <CardContent sx={{ display: 'flex', minHeight: '22rem' }}>
                 {
                     props.afInputRow.length > 0 ? (
-                        <Stack spacing={2} sx={{width: '100%'}}>
+                        <Stack spacing={2} sx={{ width: '100%' }}>
                             {
                                 props.afInputRow.map(input => {
                                     return (
-                                        <FilterInputForm
+                                        <AdvancedFilterInputForm
                                             key={input.id}
                                             value={input}
                                             setInputList={props.setAfInputRow}
                                             afInputListRef={props.filterInputListRef}
                                             nameFilterAvail={nameFilterAvail}
-                                        ></FilterInputForm>
+                                        ></AdvancedFilterInputForm>
                                     )
                                 })
                             }
@@ -98,16 +101,16 @@ export default function FilterInputFormList(
                                 {t('common.add_filter_elements')}
                             </Typography>
                         </Stack>
-
                     )
                 }
             </CardContent>
-            <Divider/>
-            <CardActions sx={{padding: '16px'}}>
-                <Stack 
-                    direction='row' 
-                    justifyContent='space-between' 
-                    sx={{width: '100%'}}
+
+            <Divider />
+            <CardActions sx={{ padding: '16px' }}>
+                <Stack
+                    direction='row'
+                    justifyContent='space-between'
+                    sx={{ width: '100%' }}
                 >
                     <Button onClick={addFilterInputForm}>
                         {t('common.add_filter_element')}
@@ -117,7 +120,6 @@ export default function FilterInputFormList(
                             value={arrayFilterNote}
                             label={t('필터 설명을 추가하세요')}
                             onChange={onArrayFilterNoteChanged}
-                            
                         />
                         <ArrayFilterTypeSelector
                             labelId="arrayFilterType"
@@ -138,7 +140,7 @@ export default function FilterInputFormList(
     )
 }
 
-function FilterInputForm(props: {
+function AdvancedFilterInputForm(props: {
     value: ArrayFilterInterface,
     setInputList: React.Dispatch<React.SetStateAction<ArrayFilterInterface[]>>,
     afInputListRef: React.MutableRefObject<ArrayFilterInterface[]>,
@@ -238,13 +240,4 @@ function FilterInputForm(props: {
             <Button onClick={(e) => removeList(e, props.value.id)}>{t('common.remove')}</Button>
         </Stack>
     )
-}
-
-function CustomTextField(props: TextFieldProps) {
-    return <TextField {...props}
-        id="outlined-basic"
-        variant="outlined"
-        size="small"
-        sx={{flex: '1'}}
-    />
 }

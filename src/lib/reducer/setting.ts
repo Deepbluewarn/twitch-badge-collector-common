@@ -36,6 +36,9 @@ export function settingReducer(state: Setting, action: SettingReducerAction): Se
         case "chatDisplayMethod":
             copyState.chatDisplayMethod = action.value as ChatDisplayMethodOptionType;
             return copyState;
+        case "advancedFilter":
+            copyState.advancedFilter = action.value as ToggleOptionsType;
+            return copyState;
         case "pointBoxAuto":
             copyState.pointBoxAuto = action.value as ToggleOptionsType;
             return copyState;
