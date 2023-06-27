@@ -11,31 +11,31 @@ export default defineConfig({
       name: 'Twitch Badge Collector Common Components',
       fileName: (format) => `twitch-badge-collector-cc.${format}.js`
     },
-    rollupOptions: {
-      external: [
-        'react', 
-        'react-dom',
-        /\@emotion\/*/,
-        /\@mui\/*/,
-        /\@fortawesome\/*/,
-        "@tanstack/react-query",
-        "axios",
-        "broadcast-channel",
-        "html-to-image",
-        "i18next",
-        'webextension-polyfill',
-        "i18next-browser-languagedetector",
-        "react-ga4",
-        "react-i18next",
-        "react-router-dom",
-        "tmi.js"
-      ],
-      output: {
-        globals: {
-          react: 'React'
-        }
-      }
-    }
+    // rollupOptions: {
+    //   external: [
+    //     'react', 
+    //     'react-dom',
+    //     /\@emotion\/*/,
+    //     /\@mui\/*/,
+    //     /\@fortawesome\/*/,
+    //     "@tanstack/react-query",
+    //     "axios",
+    //     "broadcast-channel",
+    //     "html-to-image",
+    //     "i18next",
+    //     'webextension-polyfill',
+    //     "i18next-browser-languagedetector",
+    //     "react-ga4",
+    //     "react-i18next",
+    //     "react-router-dom",
+    //     "tmi.js"
+    //   ],
+    //   output: {
+    //     globals: {
+    //       react: 'React'
+    //     }
+    //   }
+    // }
   },
   plugins: [
     dts(),
