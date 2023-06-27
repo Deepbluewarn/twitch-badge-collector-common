@@ -129,18 +129,13 @@ function BasicFilterInputForm(
 
     const resetFilterInput = useCallback(() => {
         props.setFilterInput(getDefaultArrayFilter());
-    }, []);
 
-    useEffect(() => {
-        if(props.inputValue.current === null) return;
-
-        if(props.filterInput.category === 'badge'){
-            props.inputValue.current.value = props.filterInput.badgeName;
-        }else{
-            props.inputValue.current.value = props.filterInput.value;
-        }
+        const inputRef = props.inputValue.current;
         
-    }, [props.filterInput])
+        if(inputRef !== null) {
+            inputRef.value = '';
+        };
+    }, []);
 
     return (
         <Stack direction='row' spacing={1}>
