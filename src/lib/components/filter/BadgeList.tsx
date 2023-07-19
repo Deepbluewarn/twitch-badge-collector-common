@@ -95,7 +95,7 @@ export default function BadgeList(props: {
         { field: 'badgeName', headerName: t('common.badge_name'), flex: 0.6 },
         {
             field: 'filterType', headerName: t('common.condition'), flex: 0.2,
-            renderCell: (params: GridRenderCellParams<FilterType>) => {
+            renderCell: (params: GridRenderCellParams<any, FilterType>) => {
                 if (!params.value) return null;
 
                 return (
@@ -228,12 +228,12 @@ export default function BadgeList(props: {
                     badgeChannelName, setBadgeChannelName
                 }
             }}
-            onSelectionModelChange={(ids) => {
+            onRowSelectionModelChange={(ids) => {
                 setShowAddButton(advancedFilter && ids.length > 0);
                 setSelectionModel(ids);
                 updateFilterInput(ids[0]);
             }}
-            selectionModel={selectionModel}
+            rowSelectionModel={selectionModel}
             checkboxSelection={advancedFilter}
         />
     )

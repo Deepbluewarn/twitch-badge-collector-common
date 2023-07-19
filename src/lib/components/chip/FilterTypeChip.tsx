@@ -3,9 +3,9 @@ import { GridCellParams } from "@mui/x-data-grid/models/params/gridCellParams";
 import { BadgeInterface } from "../../interface/chat";
 import { ArrayFilterListInterface, FilterType, TypeArr } from "../../interface/filter";
 
-export function onArrayFilterTypeChipClick(params: GridCellParams,
+export function onArrayFilterTypeChipClick(params: GridCellParams<any, FilterType>,
     setRows: React.Dispatch<React.SetStateAction<ArrayFilterListInterface[]>>) {
-    if (params.field === 'filterType') {
+    if (params.field === 'filterType' && typeof params.value !== 'undefined') {
         const newType = rotateFilterType(params.value);
 
         setRows((rows) => {
@@ -16,9 +16,9 @@ export function onArrayFilterTypeChipClick(params: GridCellParams,
         });
     }
 }
-export function onBadgeTypeChipClick(params: GridCellParams,
+export function onBadgeTypeChipClick(params: GridCellParams<any, FilterType>,
     setRows: React.Dispatch<React.SetStateAction<BadgeInterface[]>>) {
-    if (params.field === 'filterType') {
+    if (params.field === 'filterType' && typeof params.value !== 'undefined') {
         const newType = rotateFilterType(params.value);
 
         setRows((rows) => {

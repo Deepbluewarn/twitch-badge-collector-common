@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import { FilterType } from "../../interface/filter";
 
-export function filterTypeClassName(params: GridCellParams<FilterType> | FilterType) {
-    let filterType = (params as GridCellParams<FilterType>).value || (params as FilterType);
+export function filterTypeClassName(params: GridCellParams<any, FilterType> | FilterType) {
+    let filterType = (params as GridCellParams<any, FilterType>).value || (params as FilterType);
 
     return `filter-type-${filterType}`;
 }
@@ -25,8 +25,8 @@ export function CustomDataGrid(props: DataGridProps) {
                 sx={{ "height": '27rem' }}
                 getRowHeight={() => 'auto'}
                 onCellClick={onTypeCellClick}
-                pageSize={6}
-                rowsPerPageOptions={[6]}
+                paginationModel={{ page: 0, pageSize: 6 }}
+                pageSizeOptions={[6]}
                 checkboxSelection={true}
                 {...props}
             />

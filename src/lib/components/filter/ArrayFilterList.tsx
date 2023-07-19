@@ -40,7 +40,7 @@ export function ArrayFilterList() {
     const columns: GridColDef[] = [
         { 
             field: 'filters', headerName: t('common.filter'), flex: 0.6, 
-            renderCell: (params: GridRenderCellParams<ArrayFilterInterface[]>) => {
+            renderCell: (params: GridRenderCellParams<any, ArrayFilterInterface[]>) => {
                 if(!params.value) return null;
 
                 const chips = params.value.map(af => {
@@ -81,7 +81,7 @@ export function ArrayFilterList() {
         },
         {
             field: 'filterNote', headerName: "비고", flex: 0.2,
-            renderCell: (params: GridRenderCellParams<string>) => {
+            renderCell: (params: GridRenderCellParams<any, string>) => {
                 if(!params.value) return null;
 
                 return (
@@ -96,7 +96,7 @@ export function ArrayFilterList() {
         },
         {
             field: 'filterType', headerName: t('common.condition'), flex: 0.2,
-            renderCell: (params: GridRenderCellParams<FilterType>) => {
+            renderCell: (params: GridRenderCellParams) => {
                 if (!params.value) return null;
 
                 return (
@@ -125,11 +125,11 @@ export function ArrayFilterList() {
                     showDeleteButton: showDeleteButton,
                 }
             }}
-            onSelectionModelChange={(ids) => {
+            onRowSelectionModelChange={(ids) => {
                 setShowDeleteButton(ids.length > 0);
                 setSelectionModel(ids);
             }}
-            selectionModel={selectionModel}
+            rowSelectionModel={selectionModel}
         />
     )
 }
