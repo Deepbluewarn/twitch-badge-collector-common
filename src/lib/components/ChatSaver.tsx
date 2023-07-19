@@ -109,6 +109,8 @@ export default function ChatSaver(props: { env: ENV }) {
           browser.webNavigation
             .getAllFrames({ tabId: tab.id })
             .then((details) => {
+              if(details === null) return;
+              
               for (const u of details) {
                 const url = new URL(u.url);
 
