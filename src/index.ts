@@ -38,6 +38,7 @@ export * as FilterInterface from './lib/interface/filter';
 export * as TwitchAPIInterface from './lib/interface/twitchAPI';
 export * as AlertInterface from './lib/interface/alert'
 export * as BroadcastChannelInterface from './lib/interface/broadcastChannelInterface';
+export * as ClientInterface from './lib/interface/client';
 
 /** i18n */
 
