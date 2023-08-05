@@ -1,6 +1,6 @@
 {
   "name": "twitch-badge-collector-cc",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Common component library for Twitch Badge Collector projects",
   "author": "bluewarn",
   "keywords": [],
@@ -12,8 +12,14 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/twitch-badge-collector-cc.es.js",
-      "require": "./dist/twitch-badge-collector-cc.umd.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/twitch-badge-collector-cc.es.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/twitch-badge-collector-cc.umd.js"
+      }
     }
   },
   "scripts": {
@@ -38,7 +44,6 @@
     "@sentry/minimal": "^6.19.7",
     "@tanstack/react-query": "^4.29.25",
     "axios": "^1.4.0",
-    "babel-loader": "^9.1.3",
     "broadcast-channel": "^5.1.0",
     "html-to-image": "^1.11.11",
     "i18next": "^23.2.11",
@@ -48,11 +53,9 @@
     "react-ga4": "^2.1.0",
     "react-i18next": "^13.0.2",
     "react-router-dom": "^6.14.2",
-    "tmi.js": "^1.8.5",
-    "webextension-polyfill": "^0.10.0"
+    "tmi.js": "^1.8.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.9",
     "@storybook/addon-essentials": "^7.1.0",
     "@storybook/addon-interactions": "^7.1.0",
     "@storybook/addon-links": "^7.1.0",
@@ -70,7 +73,8 @@
     "prop-types": "^15.8.1",
     "storybook": "^7.1.0",
     "typescript": "^5.1.6",
-    "vite": "^4.4.4",
-    "vite-plugin-dts": "^3.3.1"
+    "vite": "^4.4.7",
+    "vite-plugin-dts": "^3.3.1",
+    "vite-plugin-externalize-deps": "^0.7.0"
   }
 }
