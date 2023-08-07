@@ -37,7 +37,7 @@ const Chat = ((props: ChatProps) => {
     }
 
     return (
-        <ChatStyleComp removed={props.msg.removed}>
+        <ChatStyleComp removed={props.msg.removed} soc={props.msg.soc}>
             <ChatTimeStamp 
                 key={props.msg.userstate?.["tmi-sent-ts"]}
                 isReplay={props.msg.replay} 
@@ -114,9 +114,15 @@ const ChatTimeStamp = memo((props: {isReplay: boolean | undefined, tmiSentTs: st
         return null;
     }
     return (
-        <TimeStampStyle className="chat-sent-ts">
-            {res}
-        </TimeStampStyle>
+        <Tooltip
+            placement='top'
+            arrow
+            title={date.toLocaleString()}
+        >
+            <TimeStampStyle className="chat-sent-ts">
+                {res}
+            </TimeStampStyle>
+        </Tooltip>
     )
 })
 

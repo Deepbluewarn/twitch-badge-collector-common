@@ -25,7 +25,11 @@ export function CustomDataGrid(props: DataGridProps) {
                 sx={{ "height": '27rem' }}
                 getRowHeight={() => 'auto'}
                 onCellClick={onTypeCellClick}
-                paginationModel={{ page: 0, pageSize: 6 }}
+                initialState={{
+                    pagination: {
+                        paginationModel: { page: 0, pageSize: 6 }
+                    }
+                }}
                 pageSizeOptions={[6]}
                 checkboxSelection={true}
                 {...props}

@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.env
+twitch-badge-collector-cc-*.tgz

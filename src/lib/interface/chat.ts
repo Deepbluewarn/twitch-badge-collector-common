@@ -12,7 +12,8 @@ export interface MessageInterface {
     removed?: boolean,
     selected?: boolean,
     replay?: boolean,
-    filter?: FilterInterface['category']
+    filter?: FilterInterface['category'],
+    soc?: boolean
 }
 export interface ChatInfoContextInterface {
     globalBadges: Map<string, Version>,

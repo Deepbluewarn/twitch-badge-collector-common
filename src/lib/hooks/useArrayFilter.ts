@@ -1,10 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import * as Sentry from "@sentry/minimal";
 import { useAlertContext } from "../context/Alert";
 import { ChatInfo } from "../interface/chat";
 import { ChatInfoObjects } from "../interface/chatInfoObjects";
-import { ENV } from "../interface/env";
 import { ArrayFilterListInterface } from "../interface/filter";
 import { arrayFiltersEqual, inIframe } from "../utils/utils";
 
@@ -17,40 +15,17 @@ import { arrayFiltersEqual, inIframe } from "../utils/utils";
  *                  @default true
  * @returns 
  */
-export default function useArrayFilter(env: ENV, extStorageReadOnly: boolean = true) {
-    Sentry.addBreadcrumb({
-        type: env,
-        category: "useArrayFilter",
-    });
+export default function useArrayFilter() {
     const isIframe = inIframe();
     const localArrayFilter = JSON.parse(isIframe ? '[]' : (localStorage.getItem('tbc-filter') || '[]')) as ArrayFilterListInterface[];
     const [ arrayFilter, setArrayFilter ] = React.useState<ArrayFilterListInterface[]>(localArrayFilter);
     const arrayFilterRef = React.useRef<ArrayFilterListInterface[]>([]);
-    const isFilterInitialized = useRef(false);
     const { addAlert } = useAlertContext();
     const { t } = useTranslation();
 
     React.useEffect(() => {
-        if (isFilterInitialized.current && env === 'Extension' && !extStorageReadOnly) {
-            import('webextension-polyfill').then(browser => {
-                browser.storage.local.set({ filter: arrayFilter });
-            });
-        }
-
         arrayFilterRef.current = arrayFilter;
     }, [arrayFilter]);
-
-    useEffect(() => {
-        if(env !== 'Extension') return;
-
-        import('webextension-polyfill').then(browser => {
-            browser.storage.local.get("filter").then((res) => {
-                setArrayFilter(res.filter);
-                isFilterInitialized.current = true;
-            });
-        });
-        
-      }, []);
 
     const addArrayFilter = (newFilters: ArrayFilterListInterface[]) => {
         for(let newFilter of newFilters){
@@ -82,14 +57,10 @@ export default function useArrayFilter(env: ENV, extStorageReadOnly: boolean = t
     }
 
     const checkFilter = (chat: ChatInfo, chatInfoObject?: ChatInfoObjects) => {
-        if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) return false;
+        console.log('[common] useArrayFilter checkFilter chat: ', chat)
+        console.log('[common] useArrayFilter checkFilter chatInfoObject: ', chatInfoObject)
 
-        Sentry.addBreadcrumb({
-            type: env,
-            category: "checkFilter",
-            message: JSON.stringify(chat),
-            data: chat
-        });
+        if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) return false;
 
         let res = false; // true 이면 해당 chat 을 포함, false 이면 제외.
 
@@ -147,6 +118,8 @@ export default function useArrayFilter(env: ENV, extStorageReadOnly: boolean = t
                 }
             }
         }
+
+        console.log('[common] useArrayFilter checkFilter res: ', res)
 
         return res;
     };
