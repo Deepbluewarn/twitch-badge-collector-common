@@ -2,7 +2,6 @@
 
 export { default as Donation } from "./lib/components/Donation";
 export { default as ChatSaver } from "./lib/components/chatSaver/ChatSaver";
-export { default as ChatSaverExtension } from "./lib/components/chatSaver/ChatSaverExtension";
 export { default as ChatSaverWeb } from "./lib/components/chatSaver/ChatSaverWeb";
 export { default as ChatSaverDialog } from "./lib/components/chatSaver/ChatSaverDialog";
 export { default as Filter} from "./lib/components/Filter";
@@ -18,12 +17,10 @@ export * as Common from './lib/components/common';
 
 export { default as useAlert } from './lib/hooks/useAlert';
 export { default as useArrayFilter } from './lib/hooks/useArrayFilter';
-export { default as useArrayFilterExtension } from './lib/hooks/extension/useArrayFilterExtension';
 export { default as useAuth } from './lib/hooks/useAuth';
 export { default as useChannelInfo } from './lib/hooks/useChannelInfo';
 export { default as useChatSaverBroadcaster } from './lib/hooks/useChatSaverBroadcaster';
 export { default as useGlobalSetting } from './lib/hooks/useGlobalSetting';
-export { default as useExtensionGlobalSetting } from './lib/hooks/extension/useGlobalSettingExtension';
 export { useReadableColor } from './lib/hooks/useReadableColor';
 export { default as useTwitchAPI } from './lib/hooks/useTwitchAPI';
 export { useCustomTheme } from './lib/hooks/useCustomTheme';
@@ -44,6 +41,10 @@ export * as TwitchAPIInterface from './lib/interface/twitchAPI';
 export * as AlertInterface from './lib/interface/alert'
 export * as BroadcastChannelInterface from './lib/interface/broadcastChannelInterface';
 export * as ClientInterface from './lib/interface/client';
+
+/** reducer */
+
+export * as SettingReducer from './lib/reducer/setting';
 /** i18n */
 
 export {default as i18n} from './lib/i18n';

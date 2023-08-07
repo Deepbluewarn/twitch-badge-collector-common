@@ -28,8 +28,7 @@ export default defineConfig({
         "react-ga4",
         "react-i18next",
         "react-router-dom",
-        "tmi.js",
-        "webextension-polyfill"
+        "tmi.js"
       ],
       output: {
         globals: {
