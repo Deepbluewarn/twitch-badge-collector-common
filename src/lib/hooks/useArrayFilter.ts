@@ -57,9 +57,6 @@ export default function useArrayFilter() {
     }
 
     const checkFilter = (chat: ChatInfo, chatInfoObject?: ChatInfoObjects) => {
-        console.log('[common] useArrayFilter checkFilter chat: ', chat)
-        console.log('[common] useArrayFilter checkFilter chatInfoObject: ', chatInfoObject)
-
         if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) return false;
 
         let res = false; // true 이면 해당 chat 을 포함, false 이면 제외.
@@ -118,8 +115,6 @@ export default function useArrayFilter() {
                 }
             }
         }
-
-        console.log('[common] useArrayFilter checkFilter res: ', res)
 
         return res;
     };
