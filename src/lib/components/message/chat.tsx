@@ -114,9 +114,15 @@ const ChatTimeStamp = memo((props: {isReplay: boolean | undefined, tmiSentTs: st
         return null;
     }
     return (
-        <TimeStampStyle className="chat-sent-ts">
-            {res}
-        </TimeStampStyle>
+        <Tooltip
+            placement='top'
+            arrow
+            title={date.toLocaleString()}
+        >
+            <TimeStampStyle className="chat-sent-ts">
+                {res}
+            </TimeStampStyle>
+        </Tooltip>
     )
 })
 
