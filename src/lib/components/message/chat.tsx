@@ -37,7 +37,7 @@ const Chat = ((props: ChatProps) => {
     }
 
     return (
-        <ChatStyleComp removed={props.msg.removed}>
+        <ChatStyleComp removed={props.msg.removed} soc={props.msg.soc}>
             <ChatTimeStamp 
                 key={props.msg.userstate?.["tmi-sent-ts"]}
                 isReplay={props.msg.replay} 
