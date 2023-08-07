@@ -30,7 +30,13 @@ export function Profile(props: {
         <Stack direction="row" alignItems='center' spacing={1}>
             <Avatar src={props.profileImgUrl}></Avatar>
             <Stack direction='column'>
-                {props.children}
+                {
+                    (typeof props.children === 'undefined') ? (
+                        <UserTitle displayName={props.displayName} loginName={props.loginName} />
+                    ) : (
+                        props.children
+                    )
+                }
             </Stack>
         </Stack>
     )
