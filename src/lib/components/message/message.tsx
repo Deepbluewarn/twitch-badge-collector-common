@@ -12,7 +12,8 @@ export default function ChatStyleComp(props: {removed?: boolean, soc?: boolean, 
     return (
         <ChatStyle className="chat" sx={{
             textDecoration: props.removed ? 'line-through' : 'none',
-            backgroundColor: props.soc ? '#232323' : ''
+            backgroundColor: props.soc ? '#232323' : '',
+            width: '100%'
         }}>
             {props.children}
         </ChatStyle>
