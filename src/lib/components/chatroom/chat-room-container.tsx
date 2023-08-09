@@ -11,6 +11,7 @@ import { MessageInterface } from '../../interface/chat';
 import { PositionOptionsType } from '../../interface/setting';
 import { UserColorContext } from '../../context/ChatContext';
 import { useGlobalSettingContext } from '../../context/GlobalSetting';
+import { CustomTheme } from '../../interface/ThemeInterface';
 
 type chatContainerType = 'origin' | 'clone';
 
@@ -23,11 +24,14 @@ interface ChatContainerProps {
     playerTime?: number;
 }
 
-const ChatContainerStyle = styled(Stack)({
+const ChatContainerStyle = styled(Stack)(({theme}) => ({
     flex: '1',
     overflow: 'auto',
     height: '100%',
-});
+    '.soc': {
+        backgroundColor: (theme as CustomTheme).colors.bgColor_3,
+    }
+}));
 
 const ChatSelectorContainer = styled(Stack)({
     paddingTop: '8px',
@@ -124,7 +128,7 @@ export function ChatContainer(props: ChatContainerProps) {
         }
 
         return (
-            <MessageWrapper key={msg.id} selectable={props.selectable} selected={msg.selected || false} messageId={msg.id} setMessageList={props.setMessageList}>
+            <MessageWrapper key={msg.id} selectable={props.selectable} selected={msg.selected || false} messageId={msg.id} setMessageList={props.setMessageList} soc={msg.soc}>
                 <>{res}</>
             </MessageWrapper>
         )
