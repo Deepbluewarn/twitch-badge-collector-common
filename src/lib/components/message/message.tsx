@@ -8,12 +8,10 @@ export const ChatStyle = styled('div')(({theme}) => ({
     color: theme.palette.text.primary
 }))
 
-export default function ChatStyleComp(props: {removed?: boolean, soc?: boolean, children: React.ReactNode}) {
+export default function ChatStyleComp(props: {removed?: boolean, children: React.ReactNode}) {
     return (
         <ChatStyle className="chat" sx={{
             textDecoration: props.removed ? 'line-through' : 'none',
-            backgroundColor: props.soc ? '#232323' : '',
-            width: '100%'
         }}>
             {props.children}
         </ChatStyle>

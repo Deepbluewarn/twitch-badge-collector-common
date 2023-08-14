@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import { BadgeInfo, CommonUserstate } from "tmi.js";
 import { styled } from "@mui/material/styles";
 import { grey } from '@mui/material/colors';
@@ -12,12 +12,9 @@ import { MessageInterface } from "../../interface/chat";
 import { useReadableColor } from "../../hooks/useReadableColor";
 import { useGlobalSettingContext } from "../../context/GlobalSetting";
 import { useChannelInfoContext } from "../../context/ChannelInfoContext";
-import { ChannelChatBadgesCategory, ChannelChatBadgesCategoryArr } from "../../interface/twitchAPI";
 import { useQuery } from "@tanstack/react-query";
 import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
-import { getSubscriberBadgeTier } from "../../utils/utils";
 import { UserDetail } from "../login/profile";
-import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import { ModalBox } from "../common";
 
@@ -37,7 +34,7 @@ const Chat = ((props: ChatProps) => {
     }
 
     return (
-        <ChatStyleComp removed={props.msg.removed} soc={props.msg.soc}>
+        <ChatStyleComp removed={props.msg.removed}>
             <ChatTimeStamp 
                 key={props.msg.userstate?.["tmi-sent-ts"]}
                 isReplay={props.msg.replay} 

@@ -16,6 +16,7 @@ export default function MessageWrapper(props: {
     selectable?: boolean,
     selected?: boolean,
     messageId?: string,
+    soc?: boolean,
     children: React.ReactNode,
 }) {
     const [checked, setChecked] = React.useState(false);
@@ -44,7 +45,7 @@ export default function MessageWrapper(props: {
     };
     
     return (
-        <MessageWrapperComp direction='row' className="message-wrapper">
+        <MessageWrapperComp direction='row' className={`message-wrapper ${props.soc ? 'soc' : ''}`}>
             {props.selectable ?
                 (<CustomCheckBox
                     checked={checked}
