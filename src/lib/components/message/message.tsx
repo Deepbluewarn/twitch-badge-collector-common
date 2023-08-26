@@ -3,8 +3,6 @@ import { styled } from "@mui/material/styles"
 export const ChatStyle = styled('div')(({theme}) => ({
     padding: '4px 14px 4px 16px',
     verticalAlign: 'middle',
-    overflowWrap: 'anywhere',
-    wordBreak: 'break-all',
     color: theme.palette.text.primary
 }))
 
