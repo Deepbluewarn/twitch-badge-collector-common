@@ -6,7 +6,8 @@ import {
     PositionOptionsType, 
     ChatDisplayMethodOptionType, 
     ToggleOptionsType,
-    NumberOptionsType
+    NumberOptionsType,
+    PlatformOptionsType
 } from "../interface/setting";
 
 export function settingReducer(state: Setting, action: SettingReducerAction): Setting{
@@ -44,6 +45,9 @@ export function settingReducer(state: Setting, action: SettingReducerAction): Se
             return copyState;
         case 'maximumNumberChats':
             copyState.maximumNumberChats = action.value as NumberOptionsType;
+            return copyState;
+        case "platform":
+            copyState.platform = action.value as PlatformOptionsType;
             return copyState;
         case "miniChatTime":
             copyState.miniChatTime = action.value as ToggleOptionsType;

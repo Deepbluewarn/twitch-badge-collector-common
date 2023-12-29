@@ -24,6 +24,7 @@ import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
 import { Version } from "../../interface/twitchAPI";
 import { useGlobalSettingContext } from "../../context/GlobalSetting";
 import RelaxedChip from "../chip/RelaxedChip";
+import { useChzzkAPIContext } from "../../context/ChzzkAPIContext";
 
 function CustomToolbar(props: {
     setAfInputRow: React.Dispatch<React.SetStateAction<ArrayFilterInterface[]>>,
@@ -35,8 +36,10 @@ function CustomToolbar(props: {
     badgeListChannel: BadgeChannelType,
     setBadgeListChannel: React.Dispatch<React.SetStateAction<BadgeChannelType>>,
     badgeChannelName: string,
-    setBadgeChannelName: React.Dispatch<React.SetStateAction<string>>
+    setBadgeChannelName: React.Dispatch<React.SetStateAction<string>>,
 }) {
+    const { globalSetting } = useGlobalSettingContext();
+    const customToolbarContainer = globalSetting.platform === 'twitch' ? (<CustomToolbarContainer />) : null
 
     return (
         <BadgeListChannelContext.Provider value={{
@@ -56,7 +59,7 @@ function CustomToolbar(props: {
                         setSelectionModel={props.setSelectionModel}
                         setShowAddButton={props.setShowAddButton}
                         showAddButton={props.showAddButton} />
-                    <CustomToolbarContainer />
+                    {customToolbarContainer}
                 </GridToolbarContainer>
             </BadgeChannelNameContext.Provider>
         </BadgeListChannelContext.Provider>
@@ -78,11 +81,13 @@ export default function BadgeList(props: {
     const [loading, setLoading] = React.useState(true);
     const { t } = useTranslation();
     const twitchAPI = useTwitchAPIContext();
+    const chzzkAPI = useChzzkAPIContext();
 
     const columns: GridColDef[] = [
         {
             field: 'badgeImage', headerName: t('common.badge'), flex: 0.1, renderCell: (params: GridRenderCellParams<BadgeUrls>) => (
                 <img
+                    style={{width: '18px', height: '18px'}}
                     src={params.value?.badge_img_url_1x}
                     srcSet={`${params.value?.badge_img_url_1x} 1x, 
                             ${params.value?.badge_img_url_2x} 2x, 
@@ -110,26 +115,34 @@ export default function BadgeList(props: {
     ];
 
     const {data: User} = useQuery(
-        ['User', badgeChannelName],
+        ['User', badgeChannelName, globalSetting.platform],
         () => twitchAPI.fetchUser('login', badgeChannelName),
         {
-            enabled: badgeChannelName !== ''
+            enabled: badgeChannelName !== '' && globalSetting.platform === 'twitch'
         }
     );
 
     const {data: GlobalBadges, isSuccess: isGBSuccess, fetchStatus: GBFetchStatus} = useQuery(
-        ['GlobalBadges', badgeListChannel],
+        ['GlobalBadges', badgeListChannel, globalSetting.platform],
         () => twitchAPI.fetchGlobalChatBadges(),
         {
-            enabled: badgeListChannel === 'global'
+            enabled: badgeListChannel === 'global' && globalSetting.platform === 'twitch'
         }
     )
 
     const {data: ChannelChatBadges, isSuccess: isCBSuccess, fetchStatus: CBFetchStatus} = useQuery(
-        ['ChannelChatBadges', badgeListChannel, userId],
+        ['ChannelChatBadges', badgeListChannel, userId, globalSetting.platform],
         () => twitchAPI.fetchChannelChatBadges(userId),
         {
-            enabled: badgeListChannel === 'channel' && userId !== ''
+            enabled: badgeListChannel === 'channel' && userId !== '' && globalSetting.platform === 'twitch'
+        }
+    )
+
+    const {data: ChzzkBadges, isSuccess: isChzzkSuccess, fetchStatus: ChzzkFetchStatus} = useQuery(
+        ['ChzzkBadges', globalSetting.platform],
+        async () => chzzkAPI.fetchBadges(),
+        {
+            enabled: globalSetting.platform === 'chzzk'
         }
     )
 
@@ -139,7 +152,10 @@ export default function BadgeList(props: {
         const badge = badgesRow.find(badge => badge.id === id.toString());
         if (!badge) return;
 
-        const badgeUUID = badgeUuidFromURL(badge.badgeImage.badge_img_url_1x);
+        const badgeUUID = 
+            globalSetting.platform === 'twitch' ? 
+                badgeUuidFromURL(badge.badgeImage.badge_img_url_1x) : 
+                badge.badgeImage.badge_img_url_1x;
 
         props.setFilterInput({
             category: 'badge',
@@ -203,12 +219,32 @@ export default function BadgeList(props: {
     }, [ChannelChatBadges, User]);
 
     React.useEffect(() => {
-        if(GBFetchStatus === 'fetching' || CBFetchStatus === 'fetching') {
+        if(GBFetchStatus === 'fetching' || CBFetchStatus === 'fetching' || ChzzkFetchStatus === 'fetching') {
             setLoading(true);
-        }else if(GBFetchStatus === 'idle' || CBFetchStatus === 'idle') {
+        }else if(GBFetchStatus === 'idle' || CBFetchStatus === 'idle' || ChzzkFetchStatus === 'idle') {
             setLoading(false);
         }
-    }, [GBFetchStatus, CBFetchStatus]);
+    }, [GBFetchStatus, CBFetchStatus, ChzzkFetchStatus]);
+
+    useEffect(() => {
+        if(!ChzzkBadges) return;
+
+        const badgesRow: BadgeInterface[] = ChzzkBadges.map(badge => {
+            return {
+                id: badge.id,
+                badgeImage: {
+                    badge_img_url_1x: badge.image,
+                    badge_img_url_2x: badge.image,
+                    badge_img_url_4x: badge.image,
+                },
+                channel: 'Global',
+                note: badge.name,
+                badgeName: badge.name,
+                filterType: 'include'
+            } as BadgeInterface;
+        });
+        setBadgesRows(badgesRow);
+    }, [ChzzkBadges]);
 
     useEffect(() => {
         setAdvancedFilter(globalSetting.advancedFilter === 'on');
@@ -225,7 +261,8 @@ export default function BadgeList(props: {
                     selectionModel, setSelectionModel,
                     showAddButton, setShowAddButton,
                     badgeListChannel, setBadgeListChannel,
-                    badgeChannelName, setBadgeChannelName
+                    badgeChannelName, setBadgeChannelName,
+                    platform: globalSetting.platform
                 }
             }}
             onRowSelectionModelChange={(ids) => {

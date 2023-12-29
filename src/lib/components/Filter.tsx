@@ -16,9 +16,10 @@ import SocialFooter from './SocialFooter';
 import { ArrayFilterList } from './filter/ArrayFilterList';
 import { useGlobalSettingContext } from '../context/GlobalSetting';
 import { getDefaultArrayFilter } from '../utils/utils';
+import Button from '@mui/material/Button';
 
 export default function Filter() {
-    const { globalSetting } = useGlobalSettingContext();
+    const { globalSetting, dispatchGlobalSetting } = useGlobalSettingContext();
     const [advancedFilter, setAdvancedFilter] = React.useState(globalSetting.advancedFilter === 'on');
     const { arrayFilter } = useArrayFilterContext();
     const { channelInfoObject, dispatchChannelInfo, channel, setChannel, User } = useChatInfoObjects();
@@ -28,6 +29,10 @@ export default function Filter() {
     const filterBroadcastChannel = React.useRef<BroadcastChannel<ArrayFilterMessageInterface>>(new BroadcastChannel('ArrayFilter'));
     const messageId = React.useRef(''); // id 는 extension 에서 생성.
     const { t } = useTranslation();
+
+    const onPlatformButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        dispatchGlobalSetting({ type: 'platform', value: globalSetting.platform == 'twitch' ? 'chzzk' : 'twitch'})
+    }
 
     React.useEffect(() => {
         ReactGA.send({ hitType: "pageview", page: "/setting/filter" });
@@ -71,6 +76,14 @@ export default function Filter() {
                             flex: '1 1 auto',
                         }}
                     >
+                        <Stack direction='row'>
+                            <Button disabled={globalSetting.platform === 'twitch'} onClick={onPlatformButtonClick}>
+                                트위치
+                            </Button>
+                            <Button disabled={globalSetting.platform === 'chzzk'} onClick={onPlatformButtonClick}>
+                                치지직
+                            </Button>
+                        </Stack>
                         <Typography variant="h6">
                             {t('setting.filter.filter_list')}
                         </Typography>
