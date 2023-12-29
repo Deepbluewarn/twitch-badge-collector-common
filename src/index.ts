@@ -23,6 +23,7 @@ export { default as useChatSaverBroadcaster } from './lib/hooks/useChatSaverBroa
 export { default as useGlobalSetting } from './lib/hooks/useGlobalSetting';
 export { useReadableColor } from './lib/hooks/useReadableColor';
 export { default as useTwitchAPI } from './lib/hooks/useTwitchAPI';
+export { default as useChzzkAPI } from './lib/hooks/useChzzkAPI';
 export { useCustomTheme } from './lib/hooks/useCustomTheme';
 
 /** Context */
@@ -38,6 +39,7 @@ export * as ChatInfoObjectsInterface from './lib/interface/chatInfoObjects';
 export * as ChannelInterface from './lib/interface/channel';
 export * as FilterInterface from './lib/interface/filter';
 export * as TwitchAPIInterface from './lib/interface/twitchAPI';
+export * as ChzzkAPIInterface from './lib/interface/chzzkAPI';
 export * as AlertInterface from './lib/interface/alert'
 export * as BroadcastChannelInterface from './lib/interface/broadcastChannelInterface';
 export * as ClientInterface from './lib/interface/client';

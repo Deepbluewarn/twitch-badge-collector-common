@@ -22,6 +22,7 @@ import { nanoid } from 'nanoid';
 import { ArrayFilterSelectorType, ArrayFilterTypeSelector, FilterCategorySelector } from './ArrayFilterComponents';
 import CustomTextField from '../TextField/CustomTextField';
 import { getDefaultArrayFilter } from '../../utils/utils';
+import { useGlobalSettingContext } from '../../context';
 
 export default function FilterInputForm(
     props: {
@@ -32,6 +33,7 @@ export default function FilterInputForm(
 
     const { t } = useTranslation();
     const matches = useMediaQuery('(min-width:600px)');
+    const { globalSetting } = useGlobalSettingContext();
     const { addArrayFilter } = useArrayFilterContext();
     const [arrayFilterNote, setArrayFilterNote] = useState('');
     const inputValue = useRef<TextFieldProps>(null);
@@ -61,7 +63,8 @@ export default function FilterInputForm(
             filterType: filterType,
             id: nanoid(),
             filterNote: arrayFilterNote,
-            filters: [props.filterInput]
+            filters: [props.filterInput],
+            platform: globalSetting.platform
         }]);
         if (added) {
             setArrayFilterNote('');
@@ -111,6 +114,7 @@ function BasicFilterInputForm(
     inputValue: React.MutableRefObject<TextFieldProps | null>
 }
 ){
+    const {globalSetting} = useGlobalSettingContext();
     const { t } = useTranslation();
 
     const selectorChanged = (event: SelectChangeEvent<ArrayFilterCategory | FilterType>, selectorType: ArrayFilterSelectorType) => {
@@ -137,6 +141,17 @@ function BasicFilterInputForm(
         };
     }, []);
 
+    useEffect(() => {
+        // 선택한 배지의 이름을 TextInput 에 자동으로 입력.
+        if(props.filterInput.category === 'badge'){
+            props.inputValue.current!.value = props.filterInput.badgeName;
+        }
+    }, [props.filterInput]);
+
+    useEffect(() => {
+        resetFilterInput();
+    }, [globalSetting.platform])
+
     return (
         <Stack direction='row' spacing={1}>
             {
@@ -151,13 +166,24 @@ function BasicFilterInputForm(
                                 alignItems: 'center'
                             }}
                         >
-                            <img
-                                src={`https://static-cdn.jtvnw.net/badges/v1/${props.filterInput.value}/1`}
-                                srcSet={
-                                    `https://static-cdn.jtvnw.net/badges/v1/${props.filterInput.value}/1 1x, 
+                            {
+                                globalSetting.platform === 'twitch' ? (
+                                    <img
+                                        style={{ width: '18px', height: '18px' }}
+                                        src={`https://static-cdn.jtvnw.net/badges/v1/${props.filterInput.value}/1`}
+                                        srcSet={
+                                            `https://static-cdn.jtvnw.net/badges/v1/${props.filterInput.value}/1 1x, 
                             https://static-cdn.jtvnw.net/badges/v1/${props.filterInput.value}/2 2x, 
                             https://static-cdn.jtvnw.net/badges/v1/${props.filterInput.value}/3 4x`}
-                            />
+                                    />
+                                ) : (
+                                    <img
+                                        style={{ width: '18px', height: '18px' }}
+                                        src={props.filterInput.value}
+                                    />
+                                )
+                            }
+                            
                         </Paper>
 
                         <CustomTextField

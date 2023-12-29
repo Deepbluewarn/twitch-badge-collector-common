@@ -1,3 +1,5 @@
+import { PlatformOptionsType } from "./setting";
+
 export const CategoryArr = ["badge_uuid", "login_name", "keyword"] as const;
 export type FilterCategory = typeof CategoryArr[number];
 
@@ -48,6 +50,7 @@ export interface ArrayFilterListInterface {
     id: string;
     filterNote: string;
     filters: ArrayFilterInterface[];
+    platform: PlatformOptionsType;
 }
 
 export interface ArrayFilterMessageInterface {

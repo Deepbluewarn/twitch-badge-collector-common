@@ -5,7 +5,6 @@ import { styled } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
-import Chip from "@mui/material/Chip";
 import { ImportFilter, ExportFilter } from "./FilterIO";
 import { CustomDataGrid } from "../datagrid/customDataGrid";
 import { chipColor, onArrayFilterTypeChipClick } from "../chip/FilterTypeChip";
@@ -13,6 +12,7 @@ import { CustomToolbarItemStyle } from "../datagrid/toolbar";
 import { useArrayFilterContext } from "../../context/ArrayFilter";
 import { ArrayFilterInterface, ArrayFilterListInterface, FilterType } from "../../interface/filter";
 import RelaxedChip from "../chip/RelaxedChip";
+import { useGlobalSettingContext } from "../../context/GlobalSetting";
 
 const ChipListStyle = styled(Stack)({
     display: 'flex',
@@ -32,7 +32,9 @@ const ChipListStyle = styled(Stack)({
 })
 
 export function ArrayFilterList() {
+    const { globalSetting } = useGlobalSettingContext();
     const { arrayFilter, setArrayFilter } = useArrayFilterContext();
+    const [platformArrayFilter, setPlatformArrayFilter] = useState<ArrayFilterListInterface[]>(arrayFilter);
     const [selectionModel, setSelectionModel] = React.useState<GridRowId[]>([]);
     const [showDeleteButton, setShowDeleteButton] = React.useState(false);
     const { t } = useTranslation();
@@ -50,13 +52,18 @@ export function ArrayFilterList() {
                     if(af.category === 'badge'){
                         const badgeUUID = af.value;
                         title = af.badgeName || '';
-                        badgeAvatar = (
+                        badgeAvatar = (globalSetting.platform === 'twitch') ? (
                             <Avatar 
                                 alt={af.badgeName} 
                                 src={`https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/1`} 
                                 srcSet={`https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/1 1x,
                                 https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/2 2x,
                                 https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/3 4x`}
+                            />
+                        ) : (
+                            <Avatar 
+                                alt={af.badgeName} 
+                                src={badgeUUID} 
                             />
                         )
                     }
@@ -112,11 +119,12 @@ export function ArrayFilterList() {
 
     React.useEffect(() => {
         localStorage.setItem('tbc-filter', JSON.stringify(arrayFilter));
-    }, [arrayFilter]);
+        setPlatformArrayFilter(arrayFilter.filter(af => af.platform === globalSetting.platform));
+    }, [arrayFilter, globalSetting.platform]);
 
     return (
         <CustomDataGrid 
-            rows={arrayFilter}
+            rows={platformArrayFilter}
             columns={columns}
             components={{ Toolbar: CustomToolbar }}
             componentsProps={{ 

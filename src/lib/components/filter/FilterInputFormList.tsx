@@ -1,7 +1,7 @@
 /**
  * 필터 고급 모드를 위한 컴포넌트입니다.
  */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Card from "@mui/material/Card";
@@ -22,6 +22,7 @@ import { nanoid } from 'nanoid';
 import { ArrayFilterCategorySelector, ArrayFilterSelectorType, ArrayFilterTypeSelector } from './ArrayFilterComponents';
 import Divider from '@mui/material/Divider';
 import CustomTextField from '../TextField/CustomTextField';
+import { useGlobalSettingContext } from '../../context/GlobalSetting';
 
 export default function FilterInputFormList(
     props: {
@@ -31,6 +32,7 @@ export default function FilterInputFormList(
     }
 ) {
     const matches = useMediaQuery('(min-width:600px)');
+    const { globalSetting } = useGlobalSettingContext();
     const { addArrayFilter } = useArrayFilterContext();
     const [arrayFilterType, setArrayFilterType] = React.useState<FilterType>('include');
     const [arrayFilterNote, setArrayFilterNote] = useState('');
@@ -58,13 +60,18 @@ export default function FilterInputFormList(
             filterType: arrayFilterType,
             id: nanoid(),
             filterNote: arrayFilterNote,
-            filters: [...props.filterInputListRef.current]
+            filters: [...props.filterInputListRef.current],
+            platform: globalSetting.platform
         }]);
         if (added) {
-            props.setAfInputRow([]);
+            resetArrayFilterInputList();
             setArrayFilterNote('');
         }
-    }, [arrayFilterType, arrayFilterNote])
+    }, [arrayFilterType, arrayFilterNote]);
+
+    const resetArrayFilterInputList = () => {
+        props.setAfInputRow([]);
+    }
 
     React.useEffect(() => {
         const rows = props.afInputRow;
@@ -73,6 +80,10 @@ export default function FilterInputFormList(
 
         setNameFilterAvail(rows.some(row => row.category === 'name'));
     }, [props.afInputRow]);
+
+    useEffect(() => {
+        resetArrayFilterInputList();
+    }, [globalSetting.platform]);
 
     return (
         <Card variant="outlined" sx={{ overflow: 'visible' }}>
@@ -146,6 +157,7 @@ function AdvancedFilterInputForm(props: {
     afInputListRef: React.MutableRefObject<ArrayFilterInterface[]>,
     nameFilterAvail: boolean
 }) {
+    const {globalSetting} = useGlobalSettingContext();
     const { t } = useTranslation();
     const inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
@@ -199,13 +211,21 @@ function AdvancedFilterInputForm(props: {
                                 alignItems: 'center'
                             }}
                         >
-                            <img
-                                src={`https://static-cdn.jtvnw.net/badges/v1/${props.value.value}/1`}
-                                srcSet={
-                                    `https://static-cdn.jtvnw.net/badges/v1/${props.value.value}/1 1x, 
+                            {globalSetting.platform === 'twitch' ? (
+                                <img
+                                    src={`https://static-cdn.jtvnw.net/badges/v1/${props.value.value}/1`}
+                                    srcSet={
+                                        `https://static-cdn.jtvnw.net/badges/v1/${props.value.value}/1 1x, 
                             https://static-cdn.jtvnw.net/badges/v1/${props.value.value}/2 2x, 
                             https://static-cdn.jtvnw.net/badges/v1/${props.value.value}/3 4x`}
-                            />
+                                />
+                            ) : (
+                                <img
+                                    style={{ width: '18px', height: '18px' }}
+                                    src={props.value.value}
+                                />
+                            )}
+                            
                         </Paper>
 
                         <CustomTextField

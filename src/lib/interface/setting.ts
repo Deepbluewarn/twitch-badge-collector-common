@@ -3,6 +3,7 @@ export const LanguageOptions = ['ko', 'en'];
 export const FontSizeOptions = ['small', 'default', 'big', 'bigger']; 
 export const PositionOptions = ['up', 'down'];
 export const ToggleOptions = ['on', 'off'];
+export const PlatformOptions = ['twitch', 'chzzk'];
 
 export type ChatDisplayMethodOptionType =
   typeof ChatDisplayMethodOptions[number] | undefined;
@@ -11,13 +12,15 @@ export type FontSizeOptionsType = typeof FontSizeOptions[number] | undefined;
 export type PositionOptionsType = typeof PositionOptions[number] | undefined;
 export type ToggleOptionsType = typeof ToggleOptions[number] | undefined;
 export type NumberOptionsType = number | undefined;
+export type PlatformOptionsType = typeof PlatformOptions[number] | undefined;
 
 export type SettingOptions = 
     LanguageOptionsType | 
     FontSizeOptionsType | 
     PositionOptionsType | 
     ToggleOptionsType | 
-    NumberOptionsType;
+    NumberOptionsType |
+    PlatformOptionsType;
 
 export type SettingCategory = 
     'SET_MULTIPLE' | 
@@ -33,7 +36,8 @@ export type SettingCategory =
     'maximumNumberChats' |
     'miniChatTime' |
     'miniLanguage' |
-    'miniFontSize';
+    'miniFontSize' |
+    'platform';
 
 export interface SettingReducerAction {
     type: SettingCategory;
@@ -61,6 +65,7 @@ export interface Setting {
 
     chatDisplayMethod?: ChatDisplayMethodOptionType;
     pointBoxAuto?: ToggleOptionsType;
+    platform?: PlatformOptionsType;
     miniChatTime?: ToggleOptionsType;
     miniLanguage?: LanguageOptionsType;
     miniFontSize?: FontSizeOptionsType;
