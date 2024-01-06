@@ -27,7 +27,16 @@ export function ImportFilter() {
 
             console.debug('ImportFilter handleChange platform: ', globalSetting.platform);
 
-            const filterJson: ArrayFilterListInterface[] = JSON.parse(e.target.result as string);
+            let filterJson: ArrayFilterListInterface[] = JSON.parse(e.target.result as string);
+            filterJson = filterJson.map((filter) => {
+
+                if(!filter.platform){
+                    filter.platform = 'twitch';
+                }
+
+                return filter;
+            });
+            
             const platformFilter = filterJson.filter((filter) => filter.platform === globalSetting.platform);
             const preservedFilter = arrayFilter.filter((filter) => filter.platform !== globalSetting.platform);
 
