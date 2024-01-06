@@ -67,7 +67,7 @@ export default function FilterInputFormList(
             resetArrayFilterInputList();
             setArrayFilterNote('');
         }
-    }, [arrayFilterType, arrayFilterNote]);
+    }, [arrayFilterType, arrayFilterNote, globalSetting.platform]);
 
     const resetArrayFilterInputList = () => {
         props.setAfInputRow([]);

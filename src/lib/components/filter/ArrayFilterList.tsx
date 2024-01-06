@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { GridColDef, GridRenderCellParams, GridRowId, GridToolbarContainer, GridToolbarFilterButton } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
 import { styled } from "@mui/material/styles";
@@ -39,93 +39,100 @@ export function ArrayFilterList() {
     const [showDeleteButton, setShowDeleteButton] = React.useState(false);
     const { t } = useTranslation();
 
-    const columns: GridColDef[] = [
-        { 
-            field: 'filters', headerName: t('common.filter'), flex: 0.6, 
-            renderCell: (params: GridRenderCellParams<any, ArrayFilterInterface[]>) => {
-                if(!params.value) return null;
+    const getColumns = useCallback(() => {
+        return [
+            { 
+                field: 'filters', headerName: t('common.filter'), flex: 0.6, 
+                renderCell: (params: GridRenderCellParams<any, ArrayFilterInterface[]>) => {
+                    if(!params.value) return null;
 
-                const chips = params.value.map(af => {
-                    let title = `${t(`filter.type.${af.category || ''}`)}: ${af.value}`;
-                    let badgeAvatar;
-
-                    if(af.category === 'badge'){
-                        const badgeUUID = af.value;
-                        title = af.badgeName || '';
-                        badgeAvatar = (globalSetting.platform === 'twitch') ? (
-                            <Avatar 
-                                alt={af.badgeName} 
-                                src={`https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/1`} 
-                                srcSet={`https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/1 1x,
-                                https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/2 2x,
-                                https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/3 4x`}
-                            />
-                        ) : (
-                            <Avatar 
-                                alt={af.badgeName} 
-                                src={badgeUUID} 
-                            />
+                    if(platformArrayFilter.length > 0 && platformArrayFilter[0].platform !== globalSetting.platform) return null;
+    
+                    const chips = params.value.map(af => {
+                        let title = `${t(`filter.type.${af.category || ''}`)}: ${af.value}`;
+                        let badgeAvatar;
+    
+                        if(af.category === 'badge'){
+                            const badgeUUID = af.value;
+                            title = af.badgeName || '';
+                            badgeAvatar = (globalSetting.platform === 'twitch') ? (
+                                <Avatar 
+                                    alt={af.badgeName} 
+                                    src={`https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/1`} 
+                                    srcSet={`https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/1 1x,
+                                    https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/2 2x,
+                                    https://static-cdn.jtvnw.net/badges/v1/${badgeUUID}/3 4x`}
+                                />
+                            ) : (
+                                <Avatar 
+                                    alt={af.badgeName} 
+                                    src={badgeUUID} 
+                                />
+                            )
+                        }
+                        return (
+                            <Tooltip key={`${title}-${af.id}`} title={title}>
+                                <RelaxedChip
+                                    label={title}
+                                    avatar={badgeAvatar}
+                                    color={chipColor(af.type)}
+                                />
+                            </Tooltip >
+                            
                         )
-                    }
+                    });
+    
                     return (
-                        <Tooltip key={`${title}-${af.id}`} title={title}>
+                        <ChipListStyle direction='row'>
+                            {chips}
+                        </ChipListStyle>
+                    )
+                }
+            },
+            {
+                field: 'filterNote', headerName: "비고", flex: 0.2,
+                renderCell: (params: GridRenderCellParams<any, string>) => {
+                    if(!params.value) return null;
+    
+                    return (
+                        <Tooltip key={params.value} title={params.value}>
                             <RelaxedChip
-                                label={title}
-                                avatar={badgeAvatar}
-                                color={chipColor(af.type)}
+                                label={params.value}
+                                color='secondary'
                             />
                         </Tooltip >
-                        
                     )
-                });
-
-                return (
-                    <ChipListStyle direction='row'>
-                        {chips}
-                    </ChipListStyle>
-                )
-            }
-        },
-        {
-            field: 'filterNote', headerName: "비고", flex: 0.2,
-            renderCell: (params: GridRenderCellParams<any, string>) => {
-                if(!params.value) return null;
-
-                return (
-                    <Tooltip key={params.value} title={params.value}>
+                }
+            },
+            {
+                field: 'filterType', headerName: t('common.condition'), flex: 0.2,
+                renderCell: (params: GridRenderCellParams) => {
+                    if (!params.value) return null;
+    
+                    return (
                         <RelaxedChip
-                            label={params.value}
-                            color='secondary'
+                            label={t(`filter.category.${params.value}`)}
+                            color={chipColor(params.value)}
+                            onClick={() => onArrayFilterTypeChipClick(params, setArrayFilter)}
                         />
-                    </Tooltip >
-                )
+                    )
+                }
             }
-        },
-        {
-            field: 'filterType', headerName: t('common.condition'), flex: 0.2,
-            renderCell: (params: GridRenderCellParams) => {
-                if (!params.value) return null;
+        ] as GridColDef[];
+    }, [globalSetting.platform, platformArrayFilter]);
 
-                return (
-                    <RelaxedChip
-                        label={t(`filter.category.${params.value}`)}
-                        color={chipColor(params.value)}
-                        onClick={() => onArrayFilterTypeChipClick(params, setArrayFilter)}
-                    />
-                )
-            }
-        }
-    ];
-
-    React.useEffect(() => {
+    useEffect(() => {
         localStorage.setItem('tbc-filter', JSON.stringify(arrayFilter));
+    }, [arrayFilter]);
+
+    useEffect(() => {
         setPlatformArrayFilter(arrayFilter.filter(af => af.platform === globalSetting.platform));
     }, [arrayFilter, globalSetting.platform]);
 
     return (
         <CustomDataGrid 
             rows={platformArrayFilter}
-            columns={columns}
+            columns={getColumns()}
             components={{ Toolbar: CustomToolbar }}
             componentsProps={{ 
                 toolbar: {

@@ -301,9 +301,14 @@ function AddSelectedBadges(
     setSelectionModel: React.Dispatch<React.SetStateAction<GridRowId[]>>,
     setShowAddButton: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
+    const {globalSetting} = useGlobalSettingContext();
+    
     setAfInputRow(list => {
         const newList: ArrayFilterInterface[] = badgesRow.map(badge => {
-            const badgeUUID = badgeUuidFromURL(badge.badgeImage.badge_img_url_1x);
+            const badgeUUID = 
+            globalSetting.platform === 'twitch' ? 
+                badgeUuidFromURL(badge.badgeImage.badge_img_url_1x) : 
+                badge.badgeImage.badge_img_url_1x;
 
             if (!selectionModel.includes(badge.id)) return;
 

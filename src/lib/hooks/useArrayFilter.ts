@@ -23,10 +23,6 @@ export default function useArrayFilter() {
     const { addAlert } = useAlertContext();
     const { t } = useTranslation();
 
-    React.useEffect(() => {
-        arrayFilterRef.current = arrayFilter;
-    }, [arrayFilter]);
-
     const addArrayFilter = (newFilters: ArrayFilterListInterface[]) => {
         for(let newFilter of newFilters){
             const empty = newFilter.filters.some(row => row.value === '');
@@ -41,7 +37,7 @@ export default function useArrayFilter() {
     
             setArrayFilter(afLists => {
                 for (let af of afLists) {
-                    if(arrayFiltersEqual(af.filters, newFilter.filters)){
+                    if(arrayFiltersEqual(af.filters, newFilter.filters) && af.platform === newFilter.platform){
                         addAlert({
                             message: t('alert.filter_already_exist'),
                             serverity: 'warning'

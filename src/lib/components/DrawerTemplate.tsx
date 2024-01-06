@@ -12,7 +12,6 @@ const drawerWidth = 310;
 
 const MainBox = styled(Box)(({theme}) => ({
     flexGrow: '1',
-    padding: '16px',
     width: `calc(100% - ${drawerWidth}px)`, 
     display: 'flex',
     'flexDirection': 'column',

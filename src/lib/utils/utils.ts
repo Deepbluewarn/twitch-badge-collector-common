@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
-import { ArrayFilterInterface } from "../interface/filter";
+import { ArrayFilterInterface, ArrayFilterListInterface } from "../interface/filter";
+import { PlatformOptionsType } from '../interface/setting';
 
 export function trim_hash(str: string) {
     let c1: string = '';
@@ -59,6 +60,10 @@ export function getLocalStorageObject(key: string) {
 export function getErrorMessage(error: unknown) {
     if (error instanceof Error) return error.message;
     return String(error);
+}
+
+export function getFilterByPlatform(platform: PlatformOptionsType, filters: ArrayFilterListInterface[]) {
+    return filters.filter(filter => filter.platform === platform);
 }
 
 export function arrayFilterEqual(a: ArrayFilterInterface, b: ArrayFilterInterface) {

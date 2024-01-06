@@ -16,7 +16,9 @@ import SocialFooter from './SocialFooter';
 import { ArrayFilterList } from './filter/ArrayFilterList';
 import { useGlobalSettingContext } from '../context/GlobalSetting';
 import { getDefaultArrayFilter } from '../utils/utils';
-import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import { Paper } from '@mui/material';
+import { PlatformOptionsType } from '../interface/setting';
 
 export default function Filter() {
     const { globalSetting, dispatchGlobalSetting } = useGlobalSettingContext();
@@ -30,8 +32,8 @@ export default function Filter() {
     const messageId = React.useRef(''); // id 는 extension 에서 생성.
     const { t } = useTranslation();
 
-    const onPlatformButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        dispatchGlobalSetting({ type: 'platform', value: globalSetting.platform == 'twitch' ? 'chzzk' : 'twitch'})
+    const onPlatformChipClick = (platform: PlatformOptionsType) => {
+        dispatchGlobalSetting({ type: 'platform', value: platform });
     }
 
     React.useEffect(() => {
@@ -58,14 +60,20 @@ export default function Filter() {
 
     return (
         <ChannelInfoContext.Provider value={{ channelInfoObject, dispatchChannelInfo, channel, setChannel, User }}>
-            <Stack spacing={2} sx={{ minHeight: '0' }}>
+            <Stack spacing={2} sx={{ 
+                    minHeight: '0',
+                    margin: '16px',
+                }}
+            >
                 <Card
                     sx={{
                         padding: '16px',
                         flex: '1',
                         display: 'flex',
                         flexDirection: 'column',
-                        overflow: 'auto'
+                        overflow: 'auto',
+                        border: '4px solid',
+                        borderColor: globalSetting.platform === 'twitch' ? '#9147ff' : '#00ffa3e6',
                     }}
                     className="card"
                     variant='outlined'
@@ -76,14 +84,13 @@ export default function Filter() {
                             flex: '1 1 auto',
                         }}
                     >
-                        <Stack direction='row'>
-                            <Button disabled={globalSetting.platform === 'twitch'} onClick={onPlatformButtonClick}>
-                                트위치
-                            </Button>
-                            <Button disabled={globalSetting.platform === 'chzzk'} onClick={onPlatformButtonClick}>
-                                치지직
-                            </Button>
-                        </Stack>
+                        <Paper sx={{ p: 1, m: 0 }}>
+                            <Stack direction='row' gap={1}>
+                                <Chip label='트위치' color={globalSetting.platform === 'twitch' ? 'primary' : 'default'} onClick={() => {onPlatformChipClick('twitch')}} clickable />
+                                <Chip label='치지직' color={globalSetting.platform === 'chzzk' ? 'primary' : 'default'} onClick={() => {onPlatformChipClick('chzzk')}} clickable />
+                            </Stack>
+                        </Paper>
+                        
                         <Typography variant="h6">
                             {t('setting.filter.filter_list')}
                         </Typography>
