@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../context/Alert";
 import { ChatInfo } from "../interface/chat";
@@ -22,6 +22,10 @@ export default function useArrayFilter() {
     const arrayFilterRef = React.useRef<ArrayFilterListInterface[]>([]);
     const { addAlert } = useAlertContext();
     const { t } = useTranslation();
+
+    useEffect(() => {
+        arrayFilterRef.current = arrayFilter;
+    }, [arrayFilter]);
 
     const addArrayFilter = (newFilters: ArrayFilterListInterface[]) => {
         for(let newFilter of newFilters){
@@ -53,7 +57,12 @@ export default function useArrayFilter() {
     }
 
     const checkFilter = (chat: ChatInfo, chatInfoObject?: ChatInfoObjects) => {
-        if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) return false;
+        if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) {
+            console.debug('useArrayFilter checkFilter: ', 'arrayFilterRef.current is undefined or empty');
+            return false;
+        }
+
+        console.debug('useArrayFilter checkFilter: ', arrayFilterRef.current);
 
         let res = false; // true 이면 해당 chat 을 포함, false 이면 제외.
 
