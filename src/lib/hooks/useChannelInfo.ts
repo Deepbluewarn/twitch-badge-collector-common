@@ -6,7 +6,7 @@ import { useTwitchAPIContext } from "../context/TwitchAPIContext";
 import { ChannelInfoInterface, ChannelInterface } from "../interface/channel";
 import { 
     Version,
-} from "../interface/twitchAPI";
+} from "../interface/api/twitchAPI";
 import { chatInfoReducer } from "../reducer/chatInfo";
 
 export default function useChannelInfo() {

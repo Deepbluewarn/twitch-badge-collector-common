@@ -3,7 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import { Link, Typography } from "@mui/material";
 import { BadgeInfo } from "tmi.js";
 import { getSubscriberBadgeTier } from "../../utils/utils";
-import { GetUsersFollows } from "../../interface/twitchAPI";
+import { GetUsersFollows } from "../../interface/api/twitchAPI";
 import { useTranslation } from "react-i18next";
 
 export function UserTitle(props: { displayName: string | undefined, loginName: string | undefined }) {

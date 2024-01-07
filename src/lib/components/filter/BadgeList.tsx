@@ -21,7 +21,7 @@ import { ArrayFilterInterface, FilterType } from "../../interface/filter";
 import { BadgeChannelType } from "../../interface/channel";
 import { BadgeChannelNameContext, BadgeListChannelContext, useBadgeChannelNameContext, useBadgeListChannelContext } from "../../context/BadgeChannel";
 import { useTwitchAPIContext } from "../../context/TwitchAPIContext";
-import { Version } from "../../interface/twitchAPI";
+import { Version } from "../../interface/api/twitchAPI";
 import { useGlobalSettingContext } from "../../context/GlobalSetting";
 import RelaxedChip from "../chip/RelaxedChip";
 import { useChzzkAPIContext } from "../../context/ChzzkAPIContext";
