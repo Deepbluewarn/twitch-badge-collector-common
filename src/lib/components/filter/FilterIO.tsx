@@ -25,8 +25,6 @@ export function ImportFilter() {
         fileReader.onloadend = (e: ProgressEvent<FileReader>) => {
             if (!e.target) return;
 
-            console.debug('ImportFilter handleChange platform: ', globalSetting.platform);
-
             let filterJson: ArrayFilterListInterface[] = JSON.parse(e.target.result as string);
             filterJson = filterJson.map((filter) => {
 

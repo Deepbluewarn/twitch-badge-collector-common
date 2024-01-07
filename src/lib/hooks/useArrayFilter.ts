@@ -57,12 +57,7 @@ export default function useArrayFilter() {
     }
 
     const checkFilter = (chat: ChatInfo, chatInfoObject?: ChatInfoObjects) => {
-        if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) {
-            console.debug('useArrayFilter checkFilter: ', 'arrayFilterRef.current is undefined or empty');
-            return false;
-        }
-
-        console.debug('useArrayFilter checkFilter: ', arrayFilterRef.current);
+        if (typeof arrayFilterRef.current === 'undefined' || arrayFilterRef.current.length === 0) return false;
 
         let res = false; // true 이면 해당 chat 을 포함, false 이면 제외.
 
