@@ -15,7 +15,26 @@ export function ImportFilter() {
     const { addAlert } = useAlertContext();
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    /**
+     * 
+     */
+    const modifyFilterListByPlatform = useCallback((filters: ArrayFilterListInterface[]) => {
+        const platformFilter = filters.filter((filter) => filter.platform === globalSetting.platform);
+        const preservedFilter = arrayFilter.filter((filter) => filter.platform !== globalSetting.platform);
+
+        if(platformFilter.length === 0) {
+            addAlert({
+                serverity: 'info',
+                message: '추가 가능한 플랫폼 필터가 없습니다.',
+            })
+            return;
+        }
+
+        setArrayFilter([]);
+        addArrayFilter([...preservedFilter, ...platformFilter]);
+    }, [arrayFilter, globalSetting.platform])
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const fileReader = new FileReader();
 
         if (!event.target.files) return;
@@ -25,26 +44,11 @@ export function ImportFilter() {
         fileReader.onloadend = (e: ProgressEvent<FileReader>) => {
             if (!e.target) return;
 
-            console.debug('ImportFilter handleChange platform: ', globalSetting.platform);
-
-            const filterJson: ArrayFilterListInterface[] = JSON.parse(e.target.result as string);
-            const platformFilter = filterJson.filter((filter) => filter.platform === globalSetting.platform);
-            const preservedFilter = arrayFilter.filter((filter) => filter.platform !== globalSetting.platform);
-
-            if(platformFilter.length === 0) {
-                addAlert({
-                    serverity: 'info',
-                    message: '추가 가능한 플랫폼 필터가 없습니다.',
-                })
-                return;
-            }
-
-            setArrayFilter([]);
-            addArrayFilter([...preservedFilter, ...platformFilter]);
+            modifyFilterListByPlatform(JSON.parse(e.target.result as string));
 
             if(inputRef.current) inputRef.current.value = '';
         };
-    }, [arrayFilter, globalSetting.platform]);
+    };
     
     return (
         <>
