@@ -25,6 +25,7 @@ import { Version } from "../../interface/api/twitchAPI";
 import { useGlobalSettingContext } from "../../context/GlobalSetting";
 import RelaxedChip from "../chip/RelaxedChip";
 import { useChzzkAPIContext } from "../../context/ChzzkAPIContext";
+import { PlatformOptionsType } from "../../interface/setting";
 
 function CustomToolbar(props: {
     setAfInputRow: React.Dispatch<React.SetStateAction<ArrayFilterInterface[]>>,
@@ -300,13 +301,12 @@ function AddSelectedBadges(
     selectionModel: GridRowId[],
     setSelectionModel: React.Dispatch<React.SetStateAction<GridRowId[]>>,
     setShowAddButton: React.Dispatch<React.SetStateAction<boolean>>,
+    platform: PlatformOptionsType
 ) {
-    const {globalSetting} = useGlobalSettingContext();
-    
     setAfInputRow(list => {
         const newList: ArrayFilterInterface[] = badgesRow.map(badge => {
             const badgeUUID = 
-            globalSetting.platform === 'twitch' ? 
+            platform === 'twitch' ? 
                 badgeUuidFromURL(badge.badgeImage.badge_img_url_1x) : 
                 badge.badgeImage.badge_img_url_1x;
 
@@ -398,6 +398,7 @@ function AddBadgeFilterButton(props: {
     if (!props.showAddButton) return null;
 
     const { t } = useTranslation();
+    const { globalSetting } = useGlobalSettingContext();
 
     return (
         <Stack
@@ -408,7 +409,8 @@ function AddBadgeFilterButton(props: {
                     props.setAfInputRow,
                     props.selectionModel,
                     props.setSelectionModel,
-                    props.setShowAddButton
+                    props.setShowAddButton,
+                    globalSetting.platform,
                 )
             }}
             sx={{
