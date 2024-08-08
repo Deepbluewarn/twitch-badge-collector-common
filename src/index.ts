@@ -38,8 +38,8 @@ export * as ChatInterface from './lib/interface/chat';
 export * as ChatInfoObjectsInterface from './lib/interface/chatInfoObjects';
 export * as ChannelInterface from './lib/interface/channel';
 export * as FilterInterface from './lib/interface/filter';
-export * as TwitchAPIInterface from './lib/interface/twitchAPI';
-export * as ChzzkAPIInterface from './lib/interface/chzzkAPI';
+export * as TwitchAPIInterface from './lib/interface/api/twitchAPI';
+export * as ChzzkAPIInterface from './lib/interface/api/chzzkAPI';
 export * as AlertInterface from './lib/interface/alert'
 export * as BroadcastChannelInterface from './lib/interface/broadcastChannelInterface';
 export * as ClientInterface from './lib/interface/client';

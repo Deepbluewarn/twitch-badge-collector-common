@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { Badges } from "../interface/chzzkAPI";
+import { Badges } from "../interface/api/chzzkAPI";
 
 export default function useChzzkAPI() {
 

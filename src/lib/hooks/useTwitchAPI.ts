@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { ChannelNameType } from "../interface/channel";
-import { ChatBadges, EmoteSet, GetClips, GetFollowedStreams, GetUser, GetUsersFollows, GetVideos, Tiers, Version } from "../interface/twitchAPI";
+import { ChatBadges, EmoteSet, GetClips, GetFollowedStreams, GetUser, GetUsersFollows, GetVideos, Tiers, Version } from "../interface/api/twitchAPI";
 
 export default function useTwitchAPI(dev: boolean) {
 

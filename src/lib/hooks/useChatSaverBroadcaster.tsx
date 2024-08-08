@@ -27,6 +27,7 @@ export default function useChatSaverBroadcaster(
         const dataValue = e.data.value;
 
         if (dataType === 'CHATSAVER_REQUEST_CHANNEL_INFO'){
+            // ChatSaver 채널 목록 요청 3
             window.postMessage({
                 sender: 'wtbc',
                 type: 'CHATSAVER_RESPONSE_CHANNEL_INFO',

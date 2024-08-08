@@ -1,4 +1,4 @@
-import { Version } from "./twitchAPI";
+import { Version } from "./api/twitchAPI";
 
 export type ChatInfoType = 'globalBadges' | 'channelBadges' | 'emotesets' | 'cheermotes';
 export type GlobalBadges = Map<string, Version>;

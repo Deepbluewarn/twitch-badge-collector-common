@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAlertContext } from "../context/Alert";
 import { ChatInfo } from "../interface/chat";
@@ -22,6 +22,10 @@ export default function useArrayFilter() {
     const arrayFilterRef = React.useRef<ArrayFilterListInterface[]>([]);
     const { addAlert } = useAlertContext();
     const { t } = useTranslation();
+
+    useEffect(() => {
+        arrayFilterRef.current = arrayFilter;
+    }, [arrayFilter]);
 
     const addArrayFilter = (newFilters: ArrayFilterListInterface[]) => {
         for(let newFilter of newFilters){
